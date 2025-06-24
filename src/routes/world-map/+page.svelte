@@ -597,11 +597,12 @@
 
 	.globe-container {
 		position: relative;
-		width: 100%;
-		margin: 2rem 0;
+		width: fit-content;
+		max-width: 800px;
+		margin: 2rem auto;
 		border-radius: 20px;
 		background: transparent;
-		padding: 20px 15px;
+		padding: 20px;
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 	}
 
