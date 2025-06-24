@@ -136,7 +136,7 @@
 	];
 
 	let selectedLocation: typeof locations[0] | null = null;
-	let rotation = 0;
+	let rotation = 90; // Start with Americas facing forward
 	let isDragging = false;
 	let lastMouseX = 0;
 
