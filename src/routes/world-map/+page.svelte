@@ -132,7 +132,10 @@
 		{ name: 'Austin, TX', lat: 30.2672, lng: -97.7431, color: '#4ECB71', description: 'Tesla Gigafactory - Senior Software Engineer' },
 		{ name: 'London, UK', lat: 51.5074, lng: -0.1278, color: '#FF6B6B', description: 'Samaya AI - Member of Technical Staff' },
 		{ name: 'Baltimore, MD', lat: 39.2904, lng: -76.6122, color: '#9B59B6', description: 'Johns Hopkins University - MS Information Security' },
-		{ name: 'Rochester, NY', lat: 43.1566, lng: -77.6088, color: '#E67E22', description: 'University of Rochester - BS ECE' }
+		{ name: 'Rochester, NY', lat: 43.1566, lng: -77.6088, color: '#E67E22', description: 'University of Rochester - BS ECE' },
+		{ name: 'Wenzhou, China', lat: 27.9994, lng: 120.6668, color: '#f97316', description: 'Birthplace 🏠' },
+		{ name: 'Shenyang, China', lat: 41.7922, lng: 123.4328, color: '#ec4899', description: 'Childhood 🧸' },
+		{ name: 'Virginia Beach, VA', lat: 36.8631, lng: -76.0158, color: '#10b981', description: 'Cape Henry Collegiate 🎓' }
 	];
 
 	let selectedLocation: typeof locations[0] | null = null;
