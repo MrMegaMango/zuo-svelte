@@ -209,13 +209,13 @@
 		ctx.fillStyle = oceanGradient;
 		ctx.fill();
 		
-		// Add blue border with outer glow
+		// Add subtle outer glow only
 		ctx.beginPath();
-		ctx.arc(centerX, centerY, radius + 3, 0, 2 * Math.PI);
-		ctx.strokeStyle = '#3b82f6';
-		ctx.lineWidth = 6;
+		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+		ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+		ctx.lineWidth = 1;
 		ctx.shadowColor = '#3b82f6';
-		ctx.shadowBlur = 12;
+		ctx.shadowBlur = 6;
 		ctx.stroke();
 		ctx.shadowBlur = 0;
 		
