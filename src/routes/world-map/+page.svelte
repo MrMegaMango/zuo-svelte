@@ -599,9 +599,9 @@
 		width: 100%;
 		margin: 2rem 0;
 		border-radius: 20px;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: transparent;
 		padding: 20px;
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 	}
 
 	canvas {
