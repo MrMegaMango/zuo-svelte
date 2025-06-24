@@ -280,6 +280,13 @@
 		background: white;
 		margin: 0;
 		color: rgba(0, 0, 0, 0.7);
+		transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		cursor: pointer;
+	}
+
+	.letter:hover {
+		transform: scale(1.05);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	}
 
 	.letter.missing {
@@ -332,6 +339,17 @@
 		border-radius: 2px;
 		font-size: calc(var(--size) * 0.5);
 		margin: 0;
+		transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		cursor: pointer;
+	}
+
+	.keyboard button:hover:not(:disabled) {
+		transform: scale(1.1);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	.keyboard button:active:not(:disabled) {
+		transform: scale(0.95);
 	}
 
 	.keyboard button.exact {

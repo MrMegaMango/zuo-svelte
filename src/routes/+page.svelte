@@ -34,7 +34,12 @@
 </svelte:head>
 
 <section>
-	<h1>Mango's Interactive Grid</h1>
+	<h1>Welcome to Mango's Svelte App</h1>
+	<p class="intro">
+		I spend 98% of my time on backend engineering...
+		<br />
+		<span class="small-text">This is clearly in that 2% 😅</span>
+	</p>
 	
 	<div class="grid">
 		{#each tiles as tile, i}
@@ -74,8 +79,22 @@
 	h1 {
 		color: #FF3E00;
 		font-size: 2.5rem;
-		margin-bottom: 1rem;
+		margin-bottom: 0.5rem;
 		text-align: center;
+	}
+
+	.intro {
+		text-align: center;
+		font-size: 1.2rem;
+		color: #676778;
+		margin-bottom: 2rem;
+		max-width: 600px;
+	}
+
+	.small-text {
+		font-size: 0.9rem;
+		color: #999;
+		font-style: italic;
 	}
 
 	.grid {
