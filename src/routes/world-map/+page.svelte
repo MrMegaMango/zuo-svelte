@@ -597,7 +597,7 @@
 
 	.globe-container {
 		position: relative;
-		width: fit-content;
+		width: 80%;
 		max-width: 800px;
 		margin: 2rem auto;
 		border-radius: 20px;
