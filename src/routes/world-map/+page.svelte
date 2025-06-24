@@ -135,7 +135,8 @@
 		{ name: 'Rochester, NY', lat: 43.1566, lng: -77.6088, color: '#E67E22', description: 'University of Rochester - BS ECE' },
 		{ name: 'Wenzhou, China', lat: 27.9994, lng: 120.6668, color: '#f97316', description: 'Birthplace 🏠' },
 		{ name: 'Shenyang, China', lat: 41.7922, lng: 123.4328, color: '#ec4899', description: 'Childhood 🧸' },
-		{ name: 'Virginia Beach, VA', lat: 36.8631, lng: -76.0158, color: '#10b981', description: 'Cape Henry Collegiate 🎓' }
+		{ name: 'Virginia Beach, VA', lat: 36.8631, lng: -76.0158, color: '#10b981', description: 'Cape Henry Collegiate 🎓' },
+		{ name: 'Shenzhen, China', lat: 22.5429, lng: 114.0630, color: '#e11d48', description: 'Married 💒' }
 	];
 
 	let selectedLocation: typeof locations[0] | null = null;
