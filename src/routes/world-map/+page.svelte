@@ -6,32 +6,123 @@
 	let ctx: CanvasRenderingContext2D;
 	let animationId: number;
 	
-	// Simplified continent outlines (major coastlines)
+	// Detailed continent outlines based on real coastlines
 	const continents = [
-		// North America
-		{ lat: 71, lng: -156 }, { lat: 71, lng: -105 }, { lat: 71, lng: -90 }, { lat: 60, lng: -85 },
-		{ lat: 60, lng: -75 }, { lat: 45, lng: -75 }, { lat: 45, lng: -125 }, { lat: 50, lng: -125 },
-		{ lat: 60, lng: -140 }, { lat: 71, lng: -156 },
-		null, // Break between continents
-		// South America
-		{ lat: 12, lng: -80 }, { lat: 12, lng: -60 }, { lat: -20, lng: -40 }, { lat: -35, lng: -60 },
-		{ lat: -55, lng: -70 }, { lat: -20, lng: -80 }, { lat: 12, lng: -80 },
+		// North America - detailed coastline
+		{ lat: 83, lng: -80 }, { lat: 83, lng: -90 }, { lat: 81, lng: -100 }, { lat: 78, lng: -110 }, 
+		{ lat: 75, lng: -115 }, { lat: 72, lng: -130 }, { lat: 70, lng: -145 }, { lat: 68, lng: -155 }, 
+		{ lat: 65, lng: -165 }, { lat: 60, lng: -170 }, { lat: 55, lng: -165 }, { lat: 58, lng: -155 }, 
+		{ lat: 61, lng: -150 }, { lat: 70, lng: -140 }, { lat: 69, lng: -133 }, { lat: 68, lng: -125 }, 
+		{ lat: 60, lng: -125 }, { lat: 55, lng: -130 }, { lat: 50, lng: -128 }, { lat: 48, lng: -125 }, 
+		{ lat: 45, lng: -124 }, { lat: 42, lng: -124 }, { lat: 38, lng: -123 }, { lat: 34, lng: -120 }, 
+		{ lat: 32, lng: -117 }, { lat: 25, lng: -112 }, { lat: 25, lng: -97 }, { lat: 28, lng: -82 }, 
+		{ lat: 31, lng: -81 }, { lat: 35, lng: -76 }, { lat: 39, lng: -74 }, { lat: 41, lng: -70 }, 
+		{ lat: 44, lng: -67 }, { lat: 47, lng: -67 }, { lat: 50, lng: -66 }, { lat: 58, lng: -68 }, 
+		{ lat: 60, lng: -64 }, { lat: 68, lng: -65 }, { lat: 75, lng: -68 }, { lat: 80, lng: -75 }, 
+		{ lat: 83, lng: -80 },
+		null, // Mexico and Central America connection
+		{ lat: 25, lng: -97 }, { lat: 21, lng: -87 }, { lat: 18, lng: -88 }, { lat: 16, lng: -90 }, 
+		{ lat: 14, lng: -92 }, { lat: 10, lng: -84 }, { lat: 8, lng: -80 }, { lat: 8, lng: -78 }, 
+		{ lat: 10, lng: -75 }, { lat: 12, lng: -72 }, { lat: 12, lng: -82 }, { lat: 16, lng: -95 }, 
+		{ lat: 20, lng: -105 }, { lat: 25, lng: -110 }, { lat: 25, lng: -97 },
 		null,
-		// Europe
-		{ lat: 71, lng: 30 }, { lat: 60, lng: 30 }, { lat: 45, lng: 0 }, { lat: 35, lng: 0 },
-		{ lat: 35, lng: 40 }, { lat: 60, lng: 40 }, { lat: 71, lng: 30 },
+		
+		// South America - detailed coastline
+		{ lat: 12, lng: -72 }, { lat: 11, lng: -60 }, { lat: 6, lng: -58 }, { lat: 4, lng: -52 }, 
+		{ lat: 2, lng: -44 }, { lat: -2, lng: -39 }, { lat: -8, lng: -35 }, { lat: -13, lng: -39 }, 
+		{ lat: -18, lng: -39 }, { lat: -23, lng: -43 }, { lat: -29, lng: -50 }, { lat: -33, lng: -53 }, 
+		{ lat: -35, lng: -57 }, { lat: -39, lng: -62 }, { lat: -42, lng: -65 }, { lat: -47, lng: -66 }, 
+		{ lat: -51, lng: -69 }, { lat: -53, lng: -68 }, { lat: -55, lng: -67 }, { lat: -52, lng: -70 }, 
+		{ lat: -48, lng: -74 }, { lat: -44, lng: -74 }, { lat: -39, lng: -73 }, { lat: -35, lng: -72 }, 
+		{ lat: -30, lng: -71 }, { lat: -24, lng: -70 }, { lat: -18, lng: -70 }, { lat: -12, lng: -77 }, 
+		{ lat: -6, lng: -81 }, { lat: 1, lng: -80 }, { lat: 8, lng: -78 }, { lat: 10, lng: -75 }, 
+		{ lat: 12, lng: -72 },
 		null,
-		// Africa
-		{ lat: 35, lng: 0 }, { lat: 35, lng: 40 }, { lat: -35, lng: 40 }, { lat: -35, lng: 20 },
-		{ lat: 35, lng: 0 },
+		
+		// Europe - detailed coastline
+		{ lat: 71, lng: 25 }, { lat: 70, lng: 30 }, { lat: 68, lng: 33 }, { lat: 65, lng: 35 }, 
+		{ lat: 60, lng: 30 }, { lat: 56, lng: 22 }, { lat: 55, lng: 13 }, { lat: 57, lng: 8 }, 
+		{ lat: 60, lng: 5 }, { lat: 62, lng: 6 }, { lat: 65, lng: 12 }, { lat: 68, lng: 16 }, 
+		{ lat: 70, lng: 20 }, { lat: 71, lng: 25 },
 		null,
-		// Asia
-		{ lat: 71, lng: 40 }, { lat: 71, lng: 180 }, { lat: 45, lng: 140 }, { lat: 10, lng: 140 },
-		{ lat: 10, lng: 100 }, { lat: 35, lng: 100 }, { lat: 35, lng: 40 }, { lat: 71, lng: 40 },
+		{ lat: 55, lng: 13 }, { lat: 54, lng: 9 }, { lat: 51, lng: 4 }, { lat: 50, lng: -5 }, 
+		{ lat: 58, lng: -8 }, { lat: 61, lng: -2 }, { lat: 59, lng: 1 }, { lat: 56, lng: 3 }, 
+		{ lat: 55, lng: 13 },
 		null,
-		// Australia
-		{ lat: -10, lng: 140 }, { lat: -40, lng: 140 }, { lat: -40, lng: 115 }, { lat: -10, lng: 115 },
-		{ lat: -10, lng: 140 }
+		{ lat: 51, lng: 4 }, { lat: 48, lng: -5 }, { lat: 43, lng: -9 }, { lat: 36, lng: -9 }, 
+		{ lat: 36, lng: -6 }, { lat: 43, lng: 3 }, { lat: 45, lng: 7 }, { lat: 47, lng: 9 }, 
+		{ lat: 49, lng: 8 }, { lat: 51, lng: 4 },
+		null,
+		{ lat: 47, lng: 9 }, { lat: 46, lng: 13 }, { lat: 42, lng: 12 }, { lat: 38, lng: 15 }, 
+		{ lat: 37, lng: 22 }, { lat: 41, lng: 28 }, { lat: 45, lng: 29 }, { lat: 48, lng: 26 }, 
+		{ lat: 50, lng: 23 }, { lat: 54, lng: 24 }, { lat: 56, lng: 22 }, { lat: 55, lng: 13 }, 
+		{ lat: 54, lng: 9 }, { lat: 47, lng: 9 },
+		null,
+		
+		// Africa - detailed coastline
+		{ lat: 37, lng: -6 }, { lat: 36, lng: -9 }, { lat: 32, lng: -9 }, { lat: 28, lng: -12 }, 
+		{ lat: 21, lng: -17 }, { lat: 15, lng: -17 }, { lat: 12, lng: -15 }, { lat: 5, lng: -3 }, 
+		{ lat: -5, lng: 9 }, { lat: -12, lng: 13 }, { lat: -18, lng: 12 }, { lat: -26, lng: 15 }, 
+		{ lat: -29, lng: 17 }, { lat: -33, lng: 18 }, { lat: -35, lng: 20 }, { lat: -34, lng: 28 }, 
+		{ lat: -26, lng: 33 }, { lat: -12, lng: 40 }, { lat: -1, lng: 42 }, { lat: 12, lng: 43 }, 
+		{ lat: 15, lng: 39 }, { lat: 18, lng: 38 }, { lat: 22, lng: 37 }, { lat: 25, lng: 35 }, 
+		{ lat: 27, lng: 33 }, { lat: 31, lng: 25 }, { lat: 32, lng: 22 }, { lat: 31, lng: 25 }, 
+		{ lat: 33, lng: 28 }, { lat: 34, lng: 26 }, { lat: 36, lng: 22 }, { lat: 37, lng: 10 }, 
+		{ lat: 36, lng: 3 }, { lat: 37, lng: -2 }, { lat: 37, lng: -6 },
+		null,
+		
+		// Asia - detailed coastline  
+		{ lat: 77, lng: 105 }, { lat: 73, lng: 125 }, { lat: 70, lng: 140 }, { lat: 65, lng: 170 }, 
+		{ lat: 60, lng: -170 }, { lat: 65, lng: -165 }, { lat: 68, lng: -155 }, { lat: 70, lng: -145 }, 
+		{ lat: 72, lng: -130 }, { lat: 75, lng: -115 }, { lat: 78, lng: -110 }, { lat: 81, lng: -100 }, 
+		{ lat: 83, lng: -90 }, { lat: 83, lng: -80 }, { lat: 80, lng: -75 }, { lat: 75, lng: -68 }, 
+		{ lat: 68, lng: -65 }, { lat: 60, lng: -64 }, { lat: 58, lng: -68 }, { lat: 50, lng: -66 }, 
+		{ lat: 47, lng: -67 }, { lat: 44, lng: -67 }, { lat: 41, lng: -70 }, { lat: 39, lng: -74 }, 
+		null,
+		{ lat: 70, lng: 140 }, { lat: 65, lng: 170 }, { lat: 60, lng: -170 }, { lat: 55, lng: -165 }, 
+		{ lat: 58, lng: -155 }, { lat: 61, lng: -150 }, { lat: 70, lng: -140 }, { lat: 69, lng: -133 }, 
+		{ lat: 68, lng: -125 }, { lat: 60, lng: -125 }, { lat: 55, lng: -130 }, { lat: 50, lng: -128 }, 
+		{ lat: 48, lng: -125 }, { lat: 45, lng: -124 }, { lat: 42, lng: -124 }, { lat: 38, lng: -123 }, 
+		{ lat: 34, lng: -120 }, { lat: 32, lng: -117 }, { lat: 25, lng: -112 }, 
+		null,
+		{ lat: 77, lng: 105 }, { lat: 75, lng: 80 }, { lat: 70, lng: 60 }, { lat: 68, lng: 33 }, 
+		{ lat: 65, lng: 35 }, { lat: 60, lng: 30 }, { lat: 56, lng: 38 }, { lat: 50, lng: 46 }, 
+		{ lat: 45, lng: 48 }, { lat: 40, lng: 50 }, { lat: 35, lng: 52 }, { lat: 25, lng: 55 }, 
+		{ lat: 23, lng: 68 }, { lat: 28, lng: 77 }, { lat: 35, lng: 75 }, { lat: 37, lng: 80 }, 
+		{ lat: 42, lng: 87 }, { lat: 48, lng: 87 }, { lat: 52, lng: 105 }, { lat: 55, lng: 115 }, 
+		{ lat: 60, lng: 120 }, { lat: 65, lng: 125 }, { lat: 70, lng: 140 }, { lat: 77, lng: 105 },
+		null,
+		{ lat: 35, lng: 75 }, { lat: 28, lng: 77 }, { lat: 23, lng: 68 }, { lat: 25, lng: 55 }, 
+		{ lat: 22, lng: 60 }, { lat: 20, lng: 72 }, { lat: 8, lng: 77 }, { lat: 6, lng: 80 }, 
+		{ lat: 10, lng: 82 }, { lat: 22, lng: 88 }, { lat: 28, lng: 88 }, { lat: 35, lng: 75 },
+		null,
+		{ lat: 22, lng: 88 }, { lat: 28, lng: 88 }, { lat: 28, lng: 97 }, { lat: 25, lng: 100 }, 
+		{ lat: 21, lng: 106 }, { lat: 16, lng: 108 }, { lat: 10, lng: 104 }, { lat: 1, lng: 104 }, 
+		{ lat: -6, lng: 107 }, { lat: -8, lng: 115 }, { lat: -8, lng: 125 }, { lat: -2, lng: 131 }, 
+		{ lat: 1, lng: 136 }, { lat: 7, lng: 134 }, { lat: 15, lng: 121 }, { lat: 19, lng: 121 }, 
+		{ lat: 24, lng: 118 }, { lat: 31, lng: 121 }, { lat: 38, lng: 125 }, { lat: 41, lng: 124 }, 
+		{ lat: 43, lng: 132 }, { lat: 46, lng: 135 }, { lat: 50, lng: 137 }, { lat: 54, lng: 137 }, 
+		{ lat: 60, lng: 140 }, { lat: 65, lng: 170 }, { lat: 70, lng: 140 }, { lat: 65, lng: 125 }, 
+		{ lat: 60, lng: 120 }, { lat: 55, lng: 115 }, { lat: 52, lng: 105 }, { lat: 48, lng: 87 }, 
+		{ lat: 42, lng: 87 }, { lat: 37, lng: 80 }, { lat: 35, lng: 75 }, { lat: 28, lng: 88 }, 
+		{ lat: 22, lng: 88 },
+		null,
+		
+		// Australia - detailed coastline
+		{ lat: -10, lng: 143 }, { lat: -12, lng: 137 }, { lat: -14, lng: 129 }, { lat: -18, lng: 122 }, 
+		{ lat: -22, lng: 114 }, { lat: -26, lng: 113 }, { lat: -32, lng: 115 }, { lat: -35, lng: 118 }, 
+		{ lat: -35, lng: 123 }, { lat: -33, lng: 128 }, { lat: -32, lng: 133 }, { lat: -30, lng: 138 }, 
+		{ lat: -28, lng: 141 }, { lat: -26, lng: 145 }, { lat: -24, lng: 148 }, { lat: -20, lng: 149 }, 
+		{ lat: -16, lng: 146 }, { lat: -12, lng: 143 }, { lat: -10, lng: 143 },
+		null,
+		// Tasmania
+		{ lat: -41, lng: 144 }, { lat: -43, lng: 146 }, { lat: -43, lng: 148 }, { lat: -41, lng: 148 }, 
+		{ lat: -41, lng: 144 },
+		null,
+		// New Zealand
+		{ lat: -34, lng: 173 }, { lat: -37, lng: 175 }, { lat: -41, lng: 174 }, { lat: -46, lng: 168 }, 
+		{ lat: -46, lng: 166 }, { lat: -41, lng: 172 }, { lat: -37, lng: 174 }, { lat: -34, lng: 173 },
+		null
 	];
 
 	// Places where Zuo has lived/worked - based on resume
@@ -87,14 +178,26 @@
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
-		// Draw globe background
+		// Draw globe background with enhanced visuals
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-		ctx.fillStyle = '#1a1a2e';
+		
+		// Create ocean gradient
+		const oceanGradient = ctx.createRadialGradient(centerX - radius * 0.3, centerY - radius * 0.3, 0, centerX, centerY, radius);
+		oceanGradient.addColorStop(0, '#1e40af');
+		oceanGradient.addColorStop(0.4, '#1e3a8a');
+		oceanGradient.addColorStop(0.8, '#1e293b');
+		oceanGradient.addColorStop(1, '#0f172a');
+		ctx.fillStyle = oceanGradient;
 		ctx.fill();
-		ctx.strokeStyle = '#2d2d4d';
-		ctx.lineWidth = 2;
+		
+		// Add subtle outer glow
+		ctx.strokeStyle = '#3b82f6';
+		ctx.lineWidth = 3;
+		ctx.shadowColor = '#3b82f6';
+		ctx.shadowBlur = 15;
 		ctx.stroke();
+		ctx.shadowBlur = 0;
 		
 		// Draw grid lines
 		ctx.strokeStyle = '#3d3d5d';
@@ -136,23 +239,39 @@
 			ctx.stroke();
 		}
 		
-		// Draw continent outlines
-		ctx.strokeStyle = '#4a5568';
+		// Draw continent outlines with enhanced visuals
+		ctx.strokeStyle = '#34d399';
 		ctx.lineWidth = 2;
-		ctx.fillStyle = 'rgba(74, 85, 104, 0.3)';
+		
+		// Create gradient for continents
+		const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+		gradient.addColorStop(0, 'rgba(52, 211, 153, 0.4)');
+		gradient.addColorStop(0.7, 'rgba(34, 197, 94, 0.3)');
+		gradient.addColorStop(1, 'rgba(21, 128, 61, 0.2)');
+		ctx.fillStyle = gradient;
 		
 		ctx.beginPath();
 		let isFirstPoint = true;
-		let currentPath: { x: number; y: number }[] = [];
+		let currentPath: { x: number; y: number; visible: boolean }[] = [];
 		
 		for (const point of continents) {
 			if (point === null) {
 				// End current continent and start new one
 				if (currentPath.length > 2) {
-					// Fill the continent
+					// Close the path properly
+					ctx.closePath();
 					ctx.fill();
+					
+					// Add glow effect for visible continents
+					if (currentPath.some(p => p.visible)) {
+						ctx.shadowColor = '#34d399';
+						ctx.shadowBlur = 10;
+						ctx.stroke();
+						ctx.shadowBlur = 0;
+					} else {
+						ctx.stroke();
+					}
 				}
-				ctx.stroke();
 				ctx.beginPath();
 				isFirstPoint = true;
 				currentPath = [];
@@ -162,8 +281,9 @@
 			const pos = latLngToXY(point.lat, point.lng, radius, rotation);
 			const projected = projectTo2D(pos.x, pos.y, pos.z, centerX, centerY);
 			
+			currentPath.push({ x: projected.x, y: projected.y, visible: projected.visible });
+			
 			if (projected.visible) {
-				currentPath.push({ x: projected.x, y: projected.y });
 				if (isFirstPoint) {
 					ctx.moveTo(projected.x, projected.y);
 					isFirstPoint = false;
@@ -175,9 +295,19 @@
 		
 		// Draw final continent
 		if (currentPath.length > 2) {
+			ctx.closePath();
 			ctx.fill();
+			
+			// Add glow effect for visible continents
+			if (currentPath.some(p => p.visible)) {
+				ctx.shadowColor = '#34d399';
+				ctx.shadowBlur = 10;
+				ctx.stroke();
+				ctx.shadowBlur = 0;
+			} else {
+				ctx.stroke();
+			}
 		}
-		ctx.stroke();
 		
 		// Draw locations
 		locations.forEach((location, index) => {
