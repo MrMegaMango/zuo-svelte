@@ -595,16 +595,16 @@
 		margin: 0 auto;
 	}
 
-	.globe-container {
+	/* .globe-container {
 		position: relative;
-		width:110%;
+		width:95%;
 		max-width: 950px;
-		margin: 2rem auto;
-		border-radius: 20px;
+		margin: 0 auto;
+		border-radius: 3px;
 		background: transparent;
 		padding: 20px;
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-	}
+		box-shadow: 0 10px 30px rgba(9, 159, 4, 0.1);
+	} */
 
 	canvas {
 		display: block;

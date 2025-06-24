@@ -36,7 +36,6 @@ declare module '$env/static/private' {
 	export const npm_config_noproxy: string;
 	export const HOME: string;
 	export const OLDPWD: string;
-	export const DISABLE_AUTO_UPDATE: string;
 	export const TERM_PROGRAM_VERSION: string;
 	export const NVM_BIN: string;
 	export const VSCODE_IPC_HOOK_CLI: string;
@@ -46,7 +45,6 @@ declare module '$env/static/private' {
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_local_prefix: string;
-	export const npm_config_yes: string;
 	export const DBUS_SESSION_BUS_ADDRESS: string;
 	export const npm_config_engine_strict: string;
 	export const COLORTERM: string;
@@ -66,7 +64,6 @@ declare module '$env/static/private' {
 	export const TERM: string;
 	export const npm_config_cache: string;
 	export const CLOUD_ML_REGION: string;
-	export const COMPOSER_NO_INTERACTION: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
 	export const NODE: string;
@@ -92,7 +89,6 @@ declare module '$env/static/private' {
 	export const XDG_DATA_DIRS: string;
 	export const npm_config_global_prefix: string;
 	export const npm_command: string;
-	export const PIP_NO_INPUT: string;
 	export const WSL2_GUI_APPS_ENABLED: string;
 	export const PNPM_HOME: string;
 	export const HOSTTYPE: string;
@@ -141,7 +137,6 @@ declare module '$env/dynamic/private' {
 		npm_config_noproxy: string;
 		HOME: string;
 		OLDPWD: string;
-		DISABLE_AUTO_UPDATE: string;
 		TERM_PROGRAM_VERSION: string;
 		NVM_BIN: string;
 		VSCODE_IPC_HOOK_CLI: string;
@@ -151,7 +146,6 @@ declare module '$env/dynamic/private' {
 		VSCODE_GIT_ASKPASS_NODE: string;
 		npm_config_userconfig: string;
 		npm_config_local_prefix: string;
-		npm_config_yes: string;
 		DBUS_SESSION_BUS_ADDRESS: string;
 		npm_config_engine_strict: string;
 		COLORTERM: string;
@@ -171,7 +165,6 @@ declare module '$env/dynamic/private' {
 		TERM: string;
 		npm_config_cache: string;
 		CLOUD_ML_REGION: string;
-		COMPOSER_NO_INTERACTION: string;
 		npm_config_node_gyp: string;
 		PATH: string;
 		NODE: string;
@@ -197,7 +190,6 @@ declare module '$env/dynamic/private' {
 		XDG_DATA_DIRS: string;
 		npm_config_global_prefix: string;
 		npm_command: string;
-		PIP_NO_INPUT: string;
 		WSL2_GUI_APPS_ENABLED: string;
 		PNPM_HOME: string;
 		HOSTTYPE: string;
