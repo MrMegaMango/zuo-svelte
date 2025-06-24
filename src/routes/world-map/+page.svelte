@@ -141,9 +141,24 @@
 	let rotation = 90; // Start with Americas facing forward
 	let isDragging = false;
 	let lastMouseX = 0;
+	let zoomLevel = 1; // Default zoom level
+	const minZoom = 0.5;
+	const maxZoom = 3;
 
 	function degToRad(deg: number): number {
 		return (deg * Math.PI) / 180;
+	}
+
+	function zoomIn() {
+		if (zoomLevel < maxZoom) {
+			zoomLevel = Math.min(maxZoom, zoomLevel + 0.2);
+		}
+	}
+
+	function zoomOut() {
+		if (zoomLevel > minZoom) {
+			zoomLevel = Math.max(minZoom, zoomLevel - 0.2);
+		}
 	}
 
 	function latLngToXY(lat: number, lng: number, radius: number, rotation: number = 0): { x: number; y: number; z: number } {
@@ -176,7 +191,8 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const radius = Math.min(canvas.width, canvas.height) * 0.45;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
+		const radius = baseRadius * zoomLevel;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
@@ -379,7 +395,8 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const radius = Math.min(canvas.width, canvas.height) * 0.45;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
+		const radius = baseRadius * zoomLevel;
 		
 		// Check if click is near any location
 		let clickedLocation = null;
@@ -404,6 +421,25 @@
 		selectedLocation = clickedLocation;
 	}
 
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === '+' || event.key === '=') {
+			event.preventDefault();
+			zoomIn();
+		} else if (event.key === '-') {
+			event.preventDefault();
+			zoomOut();
+		}
+	}
+
+	function handleWheel(event: WheelEvent) {
+		event.preventDefault();
+		if (event.deltaY < 0) {
+			zoomIn();
+		} else {
+			zoomOut();
+		}
+	}
+
 	function resizeCanvas() {
 		if (!canvas) return;
 		
@@ -422,12 +458,16 @@
 			animate();
 			
 			window.addEventListener('resize', resizeCanvas);
+			window.addEventListener('keydown', handleKeyDown);
+			canvas.addEventListener('wheel', handleWheel);
 			
 			return () => {
 				if (animationId) {
 					cancelAnimationFrame(animationId);
 				}
 				window.removeEventListener('resize', resizeCanvas);
+				window.removeEventListener('keydown', handleKeyDown);
+				canvas.removeEventListener('wheel', handleWheel);
 			};
 		}
 	});
@@ -441,7 +481,7 @@
 <div class="world-map-container">
 	<header class="header">
 		<h1>🌍 Places I've Called Home</h1>
-		<p>Click and drag to rotate the globe. Click on markers to learn more about each location.</p>
+		<p>Click and drag to rotate the globe. Use zoom controls or mouse wheel to zoom in/out. Click on markers to learn more about each location.</p>
 	</header>
 
 	<div class="globe-container">
@@ -453,6 +493,38 @@
 			on:mouseleave={handleMouseUp}
 			on:click={handleCanvasClick}
 		></canvas>
+		
+		<!-- Zoom Controls -->
+		<div class="zoom-controls">
+			<button 
+				class="zoom-btn zoom-in" 
+				on:click={zoomIn}
+				disabled={zoomLevel >= maxZoom}
+				title="Zoom In"
+			>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.35-4.35"></path>
+					<line x1="11" y1="8" x2="11" y2="14"></line>
+					<line x1="8" y1="11" x2="14" y2="11"></line>
+				</svg>
+			</button>
+			<button 
+				class="zoom-btn zoom-out" 
+				on:click={zoomOut}
+				disabled={zoomLevel <= minZoom}
+				title="Zoom Out"
+			>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.35-4.35"></path>
+					<line x1="8" y1="11" x2="14" y2="11"></line>
+				</svg>
+			</button>
+			<div class="zoom-level">
+				{Math.round(zoomLevel * 100)}%
+			</div>
+		</div>
 	</div>
 
 	{#if selectedLocation}
@@ -521,6 +593,7 @@
 	}
 
 	.globe-container {
+		position: relative;
 		width: 100%;
 		margin: 2rem 0;
 		border-radius: 20px;
@@ -538,6 +611,61 @@
 
 	canvas:active {
 		cursor: grabbing;
+	}
+
+	.zoom-controls {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		z-index: 10;
+	}
+
+	.zoom-btn {
+		width: 44px;
+		height: 44px;
+		border: none;
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.9);
+		backdrop-filter: blur(10px);
+		color: #2c3e50;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	.zoom-btn:hover:not(:disabled) {
+		background: rgba(255, 255, 255, 1);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+	}
+
+	.zoom-btn:active:not(:disabled) {
+		transform: translateY(0);
+	}
+
+	.zoom-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		background: rgba(255, 255, 255, 0.6);
+	}
+
+	.zoom-level {
+		background: rgba(255, 255, 255, 0.9);
+		backdrop-filter: blur(10px);
+		color: #2c3e50;
+		font-size: 12px;
+		font-weight: 600;
+		padding: 8px 12px;
+		border-radius: 6px;
+		text-align: center;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		min-width: 44px;
 	}
 
 	.location-info {
