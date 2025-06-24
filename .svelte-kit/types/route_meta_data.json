@@ -4,10 +4,6 @@
 		"src/routes/+layout.js",
 		"src/routes/+layout.js"
 	],
-	"/about": [
-		"src/routes/about/+page.ts",
-		"src/routes/+layout.js"
-	],
 	"/sverdle": [
 		"src/routes/sverdle/+page.js",
 		"src/routes/sverdle/+page.server.ts",
