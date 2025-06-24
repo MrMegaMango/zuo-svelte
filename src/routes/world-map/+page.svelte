@@ -191,7 +191,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const baseRadius = Math.min(canvas.width, canvas.height) * 0.8;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
 		const radius = baseRadius * zoomLevel;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -209,11 +209,13 @@
 		ctx.fillStyle = oceanGradient;
 		ctx.fill();
 		
-		// Add subtle outer glow
+		// Add blue border with outer glow
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius + 3, 0, 2 * Math.PI);
 		ctx.strokeStyle = '#3b82f6';
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 6;
 		ctx.shadowColor = '#3b82f6';
-		ctx.shadowBlur = 8;
+		ctx.shadowBlur = 12;
 		ctx.stroke();
 		ctx.shadowBlur = 0;
 		
@@ -395,7 +397,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const baseRadius = Math.min(canvas.width, canvas.height) * 0.8;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
 		const radius = baseRadius * zoomLevel;
 		
 		// Check if click is near any location
