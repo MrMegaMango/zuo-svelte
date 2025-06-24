@@ -146,7 +146,7 @@
 
 	function latLngToXY(lat: number, lng: number, radius: number, rotation: number = 0): { x: number; y: number; z: number } {
 		const phi = degToRad(90 - lat);
-		const theta = degToRad(lng + rotation);
+		const theta = degToRad(lng - rotation); // Subtract rotation for correct direction
 		
 		const x = radius * Math.sin(phi) * Math.cos(theta);
 		const y = radius * Math.cos(phi);
