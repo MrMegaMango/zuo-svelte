@@ -1,0 +1,14 @@
+# SvelteKit-specific patterns not covered by root .gitignore
+
+# Additional deployment platforms
+.netlify
+.wrangler
+
+# Vite timestamps
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Environment files (keep examples)
+!.env.example
+!.env.test
+

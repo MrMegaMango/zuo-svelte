@@ -1,0 +1,28 @@
+{
+	"/": [
+		"src/routes/+page.ts",
+		"src/routes/+layout.js",
+		"src/routes/+layout.js"
+	],
+	"/about": [
+		"src/routes/about/+page.ts",
+		"src/routes/+layout.js"
+	],
+	"/sverdle": [
+		"src/routes/sverdle/+page.js",
+		"src/routes/sverdle/+page.server.ts",
+		"src/routes/+layout.js"
+	],
+	"/sverdle/how-to-play": [
+		"src/routes/sverdle/how-to-play/+page.ts",
+		"src/routes/+layout.js"
+	],
+	"/test-globe": [
+		"src/routes/test-globe/+page.ts",
+		"src/routes/+layout.js"
+	],
+	"/world-map": [
+		"src/routes/world-map/+page.ts",
+		"src/routes/+layout.js"
+	]
+}
