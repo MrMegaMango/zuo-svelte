@@ -12,7 +12,7 @@
 				<a href="{base}/">Home</a>
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
-				<a href="{base}/sverdle">Sverdle</a>
+				<a href="{base}/sverdle">Wordle</a>
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/world-map') ? 'page' : undefined}>
 				<a href="{base}/world-map">World Map</a>
