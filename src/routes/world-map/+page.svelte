@@ -570,7 +570,7 @@
 		max-width: 1000px;
 		margin: 0 auto;
 		padding: 2rem;
-		font-family: 'Inter', sans-serif;
+		font-family: 'Inter', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 	}
 
 	.header {
