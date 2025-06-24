@@ -191,7 +191,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.8;
 		const radius = baseRadius * zoomLevel;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -211,9 +211,9 @@
 		
 		// Add subtle outer glow
 		ctx.strokeStyle = '#3b82f6';
-		ctx.lineWidth = 3;
+		ctx.lineWidth = 2;
 		ctx.shadowColor = '#3b82f6';
-		ctx.shadowBlur = 15;
+		ctx.shadowBlur = 8;
 		ctx.stroke();
 		ctx.shadowBlur = 0;
 		
@@ -395,7 +395,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const baseRadius = Math.min(canvas.width, canvas.height) * 0.45;
+		const baseRadius = Math.min(canvas.width, canvas.height) * 0.8;
 		const radius = baseRadius * zoomLevel;
 		
 		// Check if click is near any location
