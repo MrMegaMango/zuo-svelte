@@ -8,23 +8,26 @@
 	
 	// Detailed continent outlines based on real coastlines
 	const continents = [
-		// North America - detailed coastline
+		// North America - realistic coastline
 		{ lat: 83, lng: -80 }, { lat: 83, lng: -90 }, { lat: 81, lng: -100 }, { lat: 78, lng: -110 }, 
 		{ lat: 75, lng: -115 }, { lat: 72, lng: -130 }, { lat: 70, lng: -145 }, { lat: 68, lng: -155 }, 
 		{ lat: 65, lng: -165 }, { lat: 60, lng: -170 }, { lat: 55, lng: -165 }, { lat: 58, lng: -155 }, 
 		{ lat: 61, lng: -150 }, { lat: 70, lng: -140 }, { lat: 69, lng: -133 }, { lat: 68, lng: -125 }, 
 		{ lat: 60, lng: -125 }, { lat: 55, lng: -130 }, { lat: 50, lng: -128 }, { lat: 48, lng: -125 }, 
 		{ lat: 45, lng: -124 }, { lat: 42, lng: -124 }, { lat: 38, lng: -123 }, { lat: 34, lng: -120 }, 
-		{ lat: 32, lng: -117 }, { lat: 25, lng: -112 }, { lat: 25, lng: -97 }, { lat: 28, lng: -82 }, 
-		{ lat: 31, lng: -81 }, { lat: 35, lng: -76 }, { lat: 39, lng: -74 }, { lat: 41, lng: -70 }, 
-		{ lat: 44, lng: -67 }, { lat: 47, lng: -67 }, { lat: 50, lng: -66 }, { lat: 58, lng: -68 }, 
-		{ lat: 60, lng: -64 }, { lat: 68, lng: -65 }, { lat: 75, lng: -68 }, { lat: 80, lng: -75 }, 
-		{ lat: 83, lng: -80 },
-		null, // Mexico and Central America connection
-		{ lat: 25, lng: -97 }, { lat: 21, lng: -87 }, { lat: 18, lng: -88 }, { lat: 16, lng: -90 }, 
+		{ lat: 32, lng: -117 }, { lat: 29, lng: -115 }, { lat: 26, lng: -110 }, { lat: 24, lng: -107 }, 
+		{ lat: 25, lng: -104 }, { lat: 26, lng: -100 }, { lat: 28, lng: -97 }, { lat: 30, lng: -94 }, 
+		{ lat: 29, lng: -90 }, { lat: 30, lng: -85 }, { lat: 31, lng: -81 }, { lat: 35, lng: -76 }, 
+		{ lat: 39, lng: -74 }, { lat: 41, lng: -70 }, { lat: 44, lng: -67 }, { lat: 47, lng: -67 }, 
+		{ lat: 50, lng: -66 }, { lat: 58, lng: -68 }, { lat: 60, lng: -64 }, { lat: 68, lng: -65 }, 
+		{ lat: 75, lng: -68 }, { lat: 80, lng: -75 }, { lat: 83, lng: -80 },
+		null, // Mexico and Central America 
+		{ lat: 28, lng: -97 }, { lat: 26, lng: -100 }, { lat: 25, lng: -104 }, { lat: 24, lng: -107 }, 
+		{ lat: 22, lng: -106 }, { lat: 21, lng: -87 }, { lat: 18, lng: -88 }, { lat: 16, lng: -90 }, 
 		{ lat: 14, lng: -92 }, { lat: 10, lng: -84 }, { lat: 8, lng: -80 }, { lat: 8, lng: -78 }, 
-		{ lat: 10, lng: -75 }, { lat: 12, lng: -72 }, { lat: 12, lng: -82 }, { lat: 16, lng: -95 }, 
-		{ lat: 20, lng: -105 }, { lat: 25, lng: -110 }, { lat: 25, lng: -97 },
+		{ lat: 10, lng: -75 }, { lat: 12, lng: -72 }, { lat: 14, lng: -82 }, { lat: 16, lng: -95 }, 
+		{ lat: 20, lng: -105 }, { lat: 22, lng: -106 }, { lat: 24, lng: -107 }, { lat: 26, lng: -100 }, 
+		{ lat: 28, lng: -97 },
 		null,
 		
 		// South America - detailed coastline
@@ -71,20 +74,15 @@
 		{ lat: 36, lng: 3 }, { lat: 37, lng: -2 }, { lat: 37, lng: -6 },
 		null,
 		
-		// Asia - detailed coastline  
+		// Asia - realistic coastline (Siberia and Far East)
 		{ lat: 77, lng: 105 }, { lat: 73, lng: 125 }, { lat: 70, lng: 140 }, { lat: 65, lng: 170 }, 
 		{ lat: 60, lng: -170 }, { lat: 65, lng: -165 }, { lat: 68, lng: -155 }, { lat: 70, lng: -145 }, 
-		{ lat: 72, lng: -130 }, { lat: 75, lng: -115 }, { lat: 78, lng: -110 }, { lat: 81, lng: -100 }, 
-		{ lat: 83, lng: -90 }, { lat: 83, lng: -80 }, { lat: 80, lng: -75 }, { lat: 75, lng: -68 }, 
-		{ lat: 68, lng: -65 }, { lat: 60, lng: -64 }, { lat: 58, lng: -68 }, { lat: 50, lng: -66 }, 
-		{ lat: 47, lng: -67 }, { lat: 44, lng: -67 }, { lat: 41, lng: -70 }, { lat: 39, lng: -74 }, 
+		{ lat: 72, lng: -130 }, { lat: 75, lng: -115 }, { lat: 78, lng: -110 }, { lat: 80, lng: -100 }, 
+		{ lat: 82, lng: -90 }, { lat: 81, lng: -80 }, { lat: 78, lng: -70 }, { lat: 75, lng: -60 }, 
+		{ lat: 70, lng: -55 }, { lat: 65, lng: -60 }, { lat: 60, lng: -65 }, { lat: 55, lng: -70 }, 
+		{ lat: 70, lng: 20 }, { lat: 75, lng: 80 }, { lat: 77, lng: 105 },
 		null,
-		{ lat: 70, lng: 140 }, { lat: 65, lng: 170 }, { lat: 60, lng: -170 }, { lat: 55, lng: -165 }, 
-		{ lat: 58, lng: -155 }, { lat: 61, lng: -150 }, { lat: 70, lng: -140 }, { lat: 69, lng: -133 }, 
-		{ lat: 68, lng: -125 }, { lat: 60, lng: -125 }, { lat: 55, lng: -130 }, { lat: 50, lng: -128 }, 
-		{ lat: 48, lng: -125 }, { lat: 45, lng: -124 }, { lat: 42, lng: -124 }, { lat: 38, lng: -123 }, 
-		{ lat: 34, lng: -120 }, { lat: 32, lng: -117 }, { lat: 25, lng: -112 }, 
-		null,
+		// Asia mainland - from Central Asia to East Asia
 		{ lat: 77, lng: 105 }, { lat: 75, lng: 80 }, { lat: 70, lng: 60 }, { lat: 68, lng: 33 }, 
 		{ lat: 65, lng: 35 }, { lat: 60, lng: 30 }, { lat: 56, lng: 38 }, { lat: 50, lng: 46 }, 
 		{ lat: 45, lng: 48 }, { lat: 40, lng: 50 }, { lat: 35, lng: 52 }, { lat: 25, lng: 55 }, 
