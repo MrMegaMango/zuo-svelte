@@ -6,6 +6,34 @@
 	let ctx: CanvasRenderingContext2D;
 	let animationId: number;
 	
+	// Simplified continent outlines (major coastlines)
+	const continents = [
+		// North America
+		{ lat: 71, lng: -156 }, { lat: 71, lng: -105 }, { lat: 71, lng: -90 }, { lat: 60, lng: -85 },
+		{ lat: 60, lng: -75 }, { lat: 45, lng: -75 }, { lat: 45, lng: -125 }, { lat: 50, lng: -125 },
+		{ lat: 60, lng: -140 }, { lat: 71, lng: -156 },
+		null, // Break between continents
+		// South America
+		{ lat: 12, lng: -80 }, { lat: 12, lng: -60 }, { lat: -20, lng: -40 }, { lat: -35, lng: -60 },
+		{ lat: -55, lng: -70 }, { lat: -20, lng: -80 }, { lat: 12, lng: -80 },
+		null,
+		// Europe
+		{ lat: 71, lng: 30 }, { lat: 60, lng: 30 }, { lat: 45, lng: 0 }, { lat: 35, lng: 0 },
+		{ lat: 35, lng: 40 }, { lat: 60, lng: 40 }, { lat: 71, lng: 30 },
+		null,
+		// Africa
+		{ lat: 35, lng: 0 }, { lat: 35, lng: 40 }, { lat: -35, lng: 40 }, { lat: -35, lng: 20 },
+		{ lat: 35, lng: 0 },
+		null,
+		// Asia
+		{ lat: 71, lng: 40 }, { lat: 71, lng: 180 }, { lat: 45, lng: 140 }, { lat: 10, lng: 140 },
+		{ lat: 10, lng: 100 }, { lat: 35, lng: 100 }, { lat: 35, lng: 40 }, { lat: 71, lng: 40 },
+		null,
+		// Australia
+		{ lat: -10, lng: 140 }, { lat: -40, lng: 140 }, { lat: -40, lng: 115 }, { lat: -10, lng: 115 },
+		{ lat: -10, lng: 140 }
+	];
+
 	// Places where Zuo has lived/worked - based on resume
 	const locations = [
 		{ name: 'Mountain View, CA', lat: 37.3861, lng: -122.0839, color: '#FF3E00', description: 'Atlassian - Software Engineer' },
@@ -107,6 +135,49 @@
 			}
 			ctx.stroke();
 		}
+		
+		// Draw continent outlines
+		ctx.strokeStyle = '#4a5568';
+		ctx.lineWidth = 2;
+		ctx.fillStyle = 'rgba(74, 85, 104, 0.3)';
+		
+		ctx.beginPath();
+		let isFirstPoint = true;
+		let currentPath: { x: number; y: number }[] = [];
+		
+		for (const point of continents) {
+			if (point === null) {
+				// End current continent and start new one
+				if (currentPath.length > 2) {
+					// Fill the continent
+					ctx.fill();
+				}
+				ctx.stroke();
+				ctx.beginPath();
+				isFirstPoint = true;
+				currentPath = [];
+				continue;
+			}
+			
+			const pos = latLngToXY(point.lat, point.lng, radius, rotation);
+			const projected = projectTo2D(pos.x, pos.y, pos.z, centerX, centerY);
+			
+			if (projected.visible) {
+				currentPath.push({ x: projected.x, y: projected.y });
+				if (isFirstPoint) {
+					ctx.moveTo(projected.x, projected.y);
+					isFirstPoint = false;
+				} else {
+					ctx.lineTo(projected.x, projected.y);
+				}
+			}
+		}
+		
+		// Draw final continent
+		if (currentPath.length > 2) {
+			ctx.fill();
+		}
+		ctx.stroke();
 		
 		// Draw locations
 		locations.forEach((location, index) => {
