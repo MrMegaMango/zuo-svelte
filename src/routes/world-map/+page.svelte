@@ -83,7 +83,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const radius = Math.min(canvas.width, canvas.height) * 0.3;
+		const radius = Math.min(canvas.width, canvas.height) * 0.45;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
@@ -247,7 +247,7 @@
 		
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
-		const radius = Math.min(canvas.width, canvas.height) * 0.3;
+		const radius = Math.min(canvas.width, canvas.height) * 0.45;
 		
 		// Check if click is near any location
 		let clickedLocation = null;
@@ -278,7 +278,7 @@
 		const container = canvas.parentElement;
 		if (container) {
 			canvas.width = container.clientWidth;
-			canvas.height = Math.min(container.clientWidth, 500);
+			canvas.height = Math.min(container.clientWidth, 700);
 		}
 		drawGlobe();
 	}
