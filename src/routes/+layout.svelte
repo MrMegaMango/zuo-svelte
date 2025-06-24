@@ -16,7 +16,7 @@
 	});
 
 	function goToHome() {
-		goto('/', { replaceState: true });
+		window.location.href = 'https://zuo.vercel.app';
 	}
 </script>
 
