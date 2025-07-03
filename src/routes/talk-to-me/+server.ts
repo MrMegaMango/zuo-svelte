@@ -91,6 +91,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 };
 
+export const prerender = false;
+
 export const GET: RequestHandler = async () => {
 	return json({ message: 'Chat API endpoint. Use POST to send messages.' });
 };
