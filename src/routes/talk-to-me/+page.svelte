@@ -28,34 +28,37 @@
 		messages.push(newMessage);
 	}
 
-	function getZuoResponse(userMessage: string): string {
-		const lowerMessage = userMessage.toLowerCase();
-		
-		if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-			return "Hi! Great to meet you! I'm excited to chat about my work in software development, my travels, or anything else you're curious about.";
+	async function getZuoResponse(userMessage: string): Promise<string> {
+		try {
+			const response = await fetch('/talk-to-me', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ message: userMessage })
+			});
+
+			if (!response.ok) {
+				throw new Error('API request failed');
+			}
+
+			const data = await response.json();
+			return data.response || getFallbackResponse();
+		} catch (error) {
+			console.error('Failed to get AI response:', error);
+			return getFallbackResponse();
 		}
-		
-		if (lowerMessage.includes('project') || lowerMessage.includes('work') || lowerMessage.includes('code')) {
-			return "I love working on interactive web experiences! This portfolio site showcases some of my recent work with SvelteKit 5, including the 3D world map and the Wordle clone. I'm passionate about creating smooth, engaging user interfaces.";
-		}
-		
-		if (lowerMessage.includes('travel') || lowerMessage.includes('world') || lowerMessage.includes('map')) {
-			return "The world map is one of my favorite features! It shows places I've been with a 3D globe you can interact with. Travel has really shaped my perspective on development - seeing how people use technology differently around the world.";
-		}
-		
-		if (lowerMessage.includes('svelte') || lowerMessage.includes('framework') || lowerMessage.includes('tech')) {
-			return "I'm really excited about Svelte 5! The new runes system with $state() and $derived() makes reactivity so much cleaner. This whole site is built with SvelteKit 5, and I love how intuitive it makes component development.";
-		}
-		
-		if (lowerMessage.includes('game') || lowerMessage.includes('wordle')) {
-			return "The Wordle clone was fun to build! I implemented it with server-side game logic to handle sessions properly. It was a great exercise in state management and user interaction design.";
-		}
-		
-		if (lowerMessage.includes('about') || lowerMessage.includes('yourself') || lowerMessage.includes('who')) {
-			return "I'm a software developer who loves creating interactive web experiences. I enjoy traveling, building things that people actually want to use, and exploring new technologies. Always happy to chat about development, design, or life in general!";
-		}
-		
-		return "That's interesting! I'd love to hear more about what you're thinking. Feel free to ask me about my projects, development experience, or anything else that comes to mind.";
+	}
+
+	function getFallbackResponse(): string {
+		const fallbacks = [
+			"I'm having some technical difficulties right now, but I'd love to chat about my projects! Ask me about the world map or Wordle clone.",
+			"My AI brain is taking a quick break! In the meantime, feel free to explore the interactive features on this site.",
+			"I'm experiencing some connectivity issues, but I'm excited to chat with you about development, travel, or technology!",
+			"Something went wrong with my responses, but I'm here to chat! What would you like to know about my work?",
+			"I'm having trouble connecting right now, but I'd love to discuss my experience with SvelteKit 5 and modern web development!"
+		];
+		return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 	}
 
 	async function sendMessage() {
@@ -72,7 +75,7 @@
 		await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
 		
 		isTyping = false;
-		const response = getZuoResponse(userText);
+		const response = await getZuoResponse(userText);
 		addMessage(response, 'zuo');
 	}
 

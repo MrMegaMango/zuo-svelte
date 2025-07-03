@@ -15,6 +15,7 @@
 	],
 	"/talk-to-me": [
 		"src/routes/talk-to-me/+page.ts",
+		"src/routes/talk-to-me/+page.server.ts",
 		"src/routes/+layout.js"
 	],
 	"/test-globe": [
