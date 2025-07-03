@@ -8,6 +8,35 @@
 		// handle negative numbers
 		return ((n % m) + m) % m;
 	}
+
+	// Update background temperature based on counter value
+	$effect(() => {
+		const value = count.current;
+		// Map counter value to temperature colors
+		// Negative = cool (blue), Positive = warm (red/orange)
+		// Use a range of -20 to +20 for nice color transitions
+		const normalizedValue = Math.max(-20, Math.min(20, value));
+		const percentage = (normalizedValue + 20) / 40; // 0 to 1
+		
+		// Create temperature gradient: blue (cold) to neutral to red/orange (hot)
+		let r, g, b;
+		if (percentage < 0.5) {
+			// Cool side: blue to neutral gray
+			const t = percentage * 2; // 0 to 1
+			r = Math.round(150 + (226 - 150) * t); // 150 to 226
+			g = Math.round(200 + (232 - 200) * t); // 200 to 232
+			b = Math.round(255 + (240 - 255) * t); // 255 to 240
+		} else {
+			// Warm side: neutral gray to orange/red
+			const t = (percentage - 0.5) * 2; // 0 to 1
+			r = Math.round(226 + (255 - 226) * t); // 226 to 255
+			g = Math.round(232 + (180 - 232) * t); // 232 to 180
+			b = Math.round(240 + (120 - 240) * t); // 240 to 120
+		}
+		
+		document.documentElement.style.setProperty('--bg-color-start', `rgb(${r}, ${g}, ${b})`);
+		document.documentElement.style.setProperty('--bg-color-end', `rgb(${Math.max(0, r-30)}, ${Math.max(0, g-30)}, ${Math.max(0, b-30)})`);
+	});
 </script>
 
 <div class="counter">
