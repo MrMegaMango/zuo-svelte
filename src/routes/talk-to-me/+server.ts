@@ -90,3 +90,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ response: fallback });
 	}
 };
+
+export const GET: RequestHandler = async () => {
+	return json({ message: 'Chat API endpoint. Use POST to send messages.' });
+};
