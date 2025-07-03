@@ -17,6 +17,9 @@
 			<li aria-current={page.url.pathname.startsWith('/world-map') ? 'page' : undefined}>
 				<a href="{base}/world-map">World Map</a>
 			</li>
+			<li aria-current={page.url.pathname.startsWith('/talk-to-me') ? 'page' : undefined}>
+				<a href="{base}/talk-to-me">Talk to Me</a>
+			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />

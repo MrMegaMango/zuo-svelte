@@ -13,6 +13,11 @@
 		"src/routes/sverdle/how-to-play/+page.ts",
 		"src/routes/+layout.js"
 	],
+	"/talk-to-me": [
+		"src/routes/talk-to-me/+page.ts",
+		"src/routes/+layout.js",
+		"src/routes/talk-to-me/+server.ts"
+	],
 	"/test-globe": [
 		"src/routes/test-globe/+page.ts",
 		"src/routes/+layout.js"

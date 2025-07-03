@@ -64,6 +64,15 @@
 		<h2>Try the counter below</h2>
 		<Counter />
 	</div>
+
+	<div class="navigation-section">
+		<h2>Explore the site</h2>
+		<div class="nav-links">
+			<a href="{base}/sverdle" class="nav-link">Play Wordle</a>
+			<a href="{base}/world-map" class="nav-link">View World Map</a>
+			<a href="{base}/talk-to-me" class="nav-link">Talk to Me</a>
+		</div>
+	</div>
 </section>
 
 <style>
@@ -131,6 +140,33 @@
 		color: #676778;
 		font-size: 1.5rem;
 		margin-bottom: 1rem;
+	}
+
+	.navigation-section {
+		margin-top: 2rem;
+		text-align: center;
+	}
+
+	.nav-links {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.nav-link {
+		padding: 0.75rem 1.5rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: white;
+		text-decoration: none;
+		border-radius: 8px;
+		font-weight: 600;
+		transition: all 0.2s;
+	}
+
+	.nav-link:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 	}
 
 	@media (max-width: 600px) {
