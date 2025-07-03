@@ -30,7 +30,7 @@
 
 	<footer>
 		<p>
-			built with DeepSeek because AI knows better than reading docs
+			built with DeepSeek instead of reading Svelte docs
 		</p>
 	</footer>
 </div>
