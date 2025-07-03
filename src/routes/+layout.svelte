@@ -12,6 +12,10 @@
 		if (browser) {
 			const { inject } = await import('@vercel/analytics');
 			inject();
+			
+			// Optional: Add Speed Insights for Core Web Vitals
+			const { injectSpeedInsights } = await import('@vercel/speed-insights/sveltekit');
+			injectSpeedInsights();
 		}
 	});
 
