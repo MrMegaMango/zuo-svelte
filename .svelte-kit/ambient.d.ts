@@ -26,12 +26,11 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const GROQ_API_KEY: string;
 	export const ANTHROPIC_VERTEX_PROJECT_ID: string;
 	export const LESSOPEN: string;
 	export const USER: string;
-	export const CLAUDE_CODE_ENTRYPOINT: string;
 	export const npm_config_user_agent: string;
-	export const GIT_EDITOR: string;
 	export const GIT_ASKPASS: string;
 	export const npm_node_execpath: string;
 	export const SHLVL: string;
@@ -64,14 +63,12 @@ declare module '$env/static/private' {
 	export const npm_config_npm_version: string;
 	export const CLAUDE_CODE_SSE_PORT: string;
 	export const TERM: string;
-	export const OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 	export const npm_config_cache: string;
 	export const CLOUD_ML_REGION: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
 	export const NODE: string;
 	export const npm_package_name: string;
-	export const COREPACK_ENABLE_AUTO_PIN: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const DISPLAY: string;
 	export const LANG: string;
@@ -83,7 +80,6 @@ declare module '$env/static/private' {
 	export const npm_package_version: string;
 	export const npm_lifecycle_event: string;
 	export const LESSCLOSE: string;
-	export const CLAUDECODE: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const npm_config_globalconfig: string;
 	export const npm_config_init_module: string;
@@ -132,12 +128,11 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		GROQ_API_KEY: string;
 		ANTHROPIC_VERTEX_PROJECT_ID: string;
 		LESSOPEN: string;
 		USER: string;
-		CLAUDE_CODE_ENTRYPOINT: string;
 		npm_config_user_agent: string;
-		GIT_EDITOR: string;
 		GIT_ASKPASS: string;
 		npm_node_execpath: string;
 		SHLVL: string;
@@ -170,14 +165,12 @@ declare module '$env/dynamic/private' {
 		npm_config_npm_version: string;
 		CLAUDE_CODE_SSE_PORT: string;
 		TERM: string;
-		OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 		npm_config_cache: string;
 		CLOUD_ML_REGION: string;
 		npm_config_node_gyp: string;
 		PATH: string;
 		NODE: string;
 		npm_package_name: string;
-		COREPACK_ENABLE_AUTO_PIN: string;
 		XDG_RUNTIME_DIR: string;
 		DISPLAY: string;
 		LANG: string;
@@ -189,7 +182,6 @@ declare module '$env/dynamic/private' {
 		npm_package_version: string;
 		npm_lifecycle_event: string;
 		LESSCLOSE: string;
-		CLAUDECODE: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		npm_config_globalconfig: string;
 		npm_config_init_module: string;
