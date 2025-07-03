@@ -61,12 +61,10 @@
 	</div>
 
 	<div class="counter-section">
-		<h2>Try the counter below</h2>
 		<Counter />
 	</div>
 
 	<div class="navigation-section">
-		<h2>Explore the site</h2>
 		<div class="nav-links">
 			<a href="{base}/sverdle" class="nav-link">Play Wordle</a>
 			<a href="{base}/world-map" class="nav-link">View Map</a>
