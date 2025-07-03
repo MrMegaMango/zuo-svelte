@@ -30,7 +30,7 @@
 
 	async function getZuoResponse(userMessage: string): Promise<string> {
 		try {
-			const response = await fetch('/talk-to-me', {
+			const response = await fetch('/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -88,7 +88,7 @@
 </script>
 
 <svelte:head>
-	<title>Talk to Me | Zuo</title>
+	<title>Chat | Zuo</title>
 	<meta name="description" content="Chat with virtual Zuo about projects, experiences, and development" />
 </svelte:head>
 
@@ -97,7 +97,6 @@
 		<div class="avatar">🧑‍💻</div>
 		<div class="header-info">
 			<h1>Chat with Zuo</h1>
-			<p>Ask me about my projects, development experience, or anything else!</p>
 		</div>
 	</div>
 
@@ -180,11 +179,6 @@
 		font-weight: 700;
 	}
 
-	.header-info p {
-		margin: 0.25rem 0 0 0;
-		opacity: 0.9;
-		font-size: 0.9rem;
-	}
 
 	.messages-container {
 		flex: 1;

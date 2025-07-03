@@ -15,10 +15,10 @@
 				<a href="{base}/sverdle">Wordle</a>
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/world-map') ? 'page' : undefined}>
-				<a href="{base}/world-map">World Map</a>
+				<a href="{base}/world-map">Map</a>
 			</li>
-			<li aria-current={page.url.pathname.startsWith('/talk-to-me') ? 'page' : undefined}>
-				<a href="{base}/talk-to-me">Talk to Me</a>
+			<li aria-current={page.url.pathname.startsWith('/chat') ? 'page' : undefined}>
+				<a href="{base}/chat">Chat</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
