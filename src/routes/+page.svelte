@@ -31,7 +31,7 @@
 </script>
 
 <svelte:head>
-	<title>Interactive Grid</title>
+	<title>Zuo's App</title>
 	<meta name="description" content="Interactive grid demo with Svelte" />
 </svelte:head>
 
