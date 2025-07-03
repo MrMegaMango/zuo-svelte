@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { tick } from 'svelte';
+
 	interface Message {
 		id: string;
 		text: string;
@@ -17,6 +19,7 @@
 
 	let currentMessage = $state('');
 	let isTyping = $state(false);
+	let messagesContainer: HTMLDivElement;
 
 	function addMessage(text: string, sender: 'user' | 'zuo') {
 		const newMessage: Message = {
@@ -26,6 +29,14 @@
 			timestamp: new Date()
 		};
 		messages.push(newMessage);
+		scrollToBottom();
+	}
+
+	async function scrollToBottom() {
+		await tick(); // Wait for DOM update
+		if (messagesContainer) {
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+		}
 	}
 
 	async function getZuoResponse(userMessage: string): Promise<string> {
@@ -70,6 +81,7 @@
 		addMessage(userText, 'user');
 		
 		isTyping = true;
+		await scrollToBottom(); // Scroll when typing indicator appears
 		
 		// Simulate typing delay
 		await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
@@ -100,7 +112,7 @@
 		</div>
 	</div>
 
-	<div class="messages-container">
+	<div class="messages-container" bind:this={messagesContainer}>
 		{#each messages as message (message.id)}
 			<div class="message {message.sender}">
 				<div class="message-content">

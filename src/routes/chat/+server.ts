@@ -149,7 +149,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		
 		// Fallback responses for when API is unavailable
 		const fallbackResponses = [
-			"I'm having some technical difficulties right now, but I'd love to chat about my projects! Ask me about the world map or Wordle clone.",
+			"I'm having some technical difficulties right now, but I'd love to chat about my projects!",
 			"My AI brain is taking a quick break! In the meantime, feel free to explore the interactive features on this site.",
 			"I'm experiencing some connectivity issues, but I'm excited to chat with you about development, travel, or technology!"
 		];
