@@ -1,10 +1,15 @@
-import { env } from '$env/dynamic/private';
+import { GROQ_API_KEY } from '$env/static/private';
 import Groq from 'groq-sdk';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-const groq = new Groq({
-	apiKey: env.GROQ_API_KEY
-});
+let groq: Groq | null = null;
+
+// Initialize Groq client only if API key is available
+if (GROQ_API_KEY) {
+	groq = new Groq({
+		apiKey: GROQ_API_KEY
+	});
+}
 
 const SYSTEM_PROMPT = `You are Zuo Wang, a Staff AI Infrastructure Engineer and the owner of this portfolio website. You are chatting with visitors to your site in a friendly, approachable way.
 
@@ -45,6 +50,11 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		if (!message || typeof message !== 'string') {
 			return json({ error: 'Invalid message' }, { status: 400 });
+		}
+
+		// Check if Groq client is available
+		if (!groq) {
+			throw new Error('Groq API not configured');
 		}
 
 		const completion = await groq.chat.completions.create({
