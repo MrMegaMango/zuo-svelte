@@ -11,6 +11,45 @@ if (GROQ_API_KEY) {
 	});
 }
 
+// In-memory conversation storage (keyed by IP)
+const conversations = new Map<string, Array<{role: 'user' | 'assistant', content: string, timestamp: number}>>();
+
+// Clean up old conversations (older than 1 hour)
+function cleanupOldConversations() {
+	const oneHourAgo = Date.now() - (60 * 60 * 1000);
+	for (const [ip, messages] of conversations.entries()) {
+		const recentMessages = messages.filter(msg => msg.timestamp > oneHourAgo);
+		if (recentMessages.length === 0) {
+			conversations.delete(ip);
+		} else {
+			conversations.set(ip, recentMessages);
+		}
+	}
+}
+
+// Clean up every 10 minutes
+setInterval(cleanupOldConversations, 10 * 60 * 1000);
+
+function getClientIP(request: Request, headers?: Headers): string {
+	// Try multiple headers for IP detection
+	const forwardedFor = request.headers.get('x-forwarded-for');
+	const realIP = request.headers.get('x-real-ip');
+	const cfConnectingIP = request.headers.get('cf-connecting-ip');
+	
+	if (forwardedFor) {
+		return forwardedFor.split(',')[0].trim();
+	}
+	if (realIP) {
+		return realIP;
+	}
+	if (cfConnectingIP) {
+		return cfConnectingIP;
+	}
+	
+	// Fallback
+	return 'unknown';
+}
+
 const SYSTEM_PROMPT = `You are Zuo Wang, a Staff AI Infrastructure Engineer and the owner of this portfolio website. You are chatting with visitors to your site in a friendly, approachable way.
 
 Professional Background:
@@ -57,23 +96,52 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error('Groq API not configured');
 		}
 
+		// Get client IP for conversation tracking
+		const clientIP = getClientIP(request);
+		
+		// Get or create conversation history for this IP
+		if (!conversations.has(clientIP)) {
+			conversations.set(clientIP, []);
+		}
+		const conversationHistory = conversations.get(clientIP)!;
+		
+		// Limit conversation history to last 10 messages (5 exchanges) to stay within token limits
+		const recentHistory = conversationHistory.slice(-10);
+		
+		// Build messages array with system prompt + conversation history + new message
+		const messages = [
+			{
+				role: 'system' as const,
+				content: SYSTEM_PROMPT
+			},
+			...recentHistory.map(msg => ({
+				role: msg.role as 'user' | 'assistant',
+				content: msg.content
+			})),
+			{
+				role: 'user' as const,
+				content: message
+			}
+		];
+
 		const completion = await groq.chat.completions.create({
-			messages: [
-				{
-					role: 'system',
-					content: SYSTEM_PROMPT
-				},
-				{
-					role: 'user',
-					content: message
-				}
-			],
+			messages,
 			model: 'llama-3.1-8b-instant',
 			temperature: 0.7,
 			max_tokens: 200
 		});
 
 		const response = completion.choices[0]?.message?.content || "I'm having trouble responding right now. Feel free to ask me about my projects or development experience!";
+
+		// Store the conversation
+		const timestamp = Date.now();
+		conversationHistory.push(
+			{ role: 'user', content: message, timestamp },
+			{ role: 'assistant', content: response, timestamp }
+		);
+		
+		// Update the conversation history
+		conversations.set(clientIP, conversationHistory);
 
 		return json({ response });
 	} catch (error) {
