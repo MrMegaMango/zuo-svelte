@@ -14,6 +14,8 @@
 
 	function handleTileClick(index: number) {
 		tiles[index].scale = 0.8;
+		// Change to a random new color when clicked
+		tiles[index].color = colors[Math.floor(Math.random() * colors.length)];
 		setTimeout(() => {
 			tiles[index].scale = 1;
 		}, 150);
