@@ -11,6 +11,12 @@
 	}));
 
 	const spring = new Spring({ stiffness: 0.1, damping: 0.6 });
+	let showPatienceMessage = false;
+
+	function checkAllSameColor() {
+		const firstColor = tiles[0].color;
+		return tiles.every(tile => tile.color === firstColor);
+	}
 
 	function handleTileClick(index: number) {
 		tiles[index].scale = 0.8;
@@ -18,6 +24,15 @@
 		const currentColor = tiles[index].color;
 		const availableColors = colors.filter(color => color !== currentColor);
 		tiles[index].color = availableColors[Math.floor(Math.random() * availableColors.length)];
+		
+		// Check if all tiles are the same color
+		if (checkAllSameColor()) {
+			showPatienceMessage = true;
+			setTimeout(() => {
+				showPatienceMessage = false;
+			}, 3000);
+		}
+		
 		setTimeout(() => {
 			tiles[index].scale = 1;
 		}, 150);
@@ -63,6 +78,12 @@
 			></button>
 		{/each}
 	</div>
+
+	{#if showPatienceMessage}
+		<div class="patience-message">
+			You have too much patience! 😅
+		</div>
+	{/if}
 
 	<div class="counter-section">
 		<Counter />
@@ -131,6 +152,33 @@
 
 	.tile:hover {
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	.patience-message {
+		background: linear-gradient(135deg, #FF6B6B, #4ECB71);
+		color: white;
+		padding: 1rem 2rem;
+		border-radius: 12px;
+		font-size: 1.1rem;
+		font-weight: 600;
+		text-align: center;
+		box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+		animation: fadeInBounce 0.5s ease-out;
+	}
+
+	@keyframes fadeInBounce {
+		0% {
+			opacity: 0;
+			transform: scale(0.8) translateY(-20px);
+		}
+		60% {
+			opacity: 1;
+			transform: scale(1.05) translateY(0);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1) translateY(0);
+		}
 	}
 
 	.counter-section {
