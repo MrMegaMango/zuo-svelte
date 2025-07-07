@@ -563,10 +563,11 @@
 
 	.instructions-footnote {
 		text-align: center;
-		color: #95a5a6;
-		font-size: 0.85rem;
+		color: #2c3e50;
+		font-size: 0.9rem;
 		margin-top: 2rem;
 		font-style: italic;
+		letter-spacing: -0.02em;
 	}
 
 	/* .globe-container {
@@ -690,7 +691,7 @@
 		}
 
 		.instructions-footnote {
-			color: #bdc3c7;
+			color: #ecf0f1;
 		}
 
 		.location-info {
