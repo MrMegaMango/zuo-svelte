@@ -10,8 +10,8 @@
 
 	onMount(async () => {
 		if (browser) {
-			const { inject } = await import('@vercel/analytics');
-			inject();
+			const { injectAnalytics } = await import('@vercel/analytics/sveltekit');
+			injectAnalytics();
 			
 			// Optional: Add Speed Insights for Core Web Vitals
 			const { injectSpeedInsights } = await import('@vercel/speed-insights/sveltekit');
