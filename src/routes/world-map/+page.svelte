@@ -484,20 +484,6 @@
 <div class="world-map-container">
 	<header class="header">
 		<h1>🌍 Places I've Called Home</h1>
-		<div class="instructions">
-			<div class="instruction-item">
-				<span class="icon">🖱️</span>
-				<span>Click and drag to rotate the globe</span>
-			</div>
-			<div class="instruction-item">
-				<span class="icon">⚡</span>
-				<span>Use mouse wheel or +/- keys to zoom</span>
-			</div>
-			<div class="instruction-item">
-				<span class="icon">📍</span>
-				<span>Click on markers to learn more</span>
-			</div>
-		</div>
 	</header>
 
 	<div class="globe-container">
@@ -546,6 +532,10 @@
 			{/each}
 		</div>
 	</div>
+
+	<footer class="instructions-footnote">
+		Drag to rotate • Scroll to zoom • Click markers for details
+	</footer>
 </div>
 
 <style>
@@ -571,37 +561,12 @@
 		background-clip: text;
 	}
 
-	.instructions {
-		display: flex;
-		justify-content: center;
-		gap: 2rem;
-		flex-wrap: wrap;
-		margin-top: 1rem;
-	}
-
-	.instruction-item {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		background: rgba(255, 255, 255, 0.1);
-		padding: 0.75rem 1.25rem;
-		border-radius: 25px;
-		backdrop-filter: blur(10px);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		color: #2c3e50;
-		font-size: 0.95rem;
-		font-weight: 500;
-		transition: all 0.3s ease;
-	}
-
-	.instruction-item:hover {
-		background: rgba(255, 255, 255, 0.2);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	}
-
-	.instruction-item .icon {
-		font-size: 1.1rem;
+	.instructions-footnote {
+		text-align: center;
+		color: #95a5a6;
+		font-size: 0.85rem;
+		margin-top: 2rem;
+		font-style: italic;
 	}
 
 	/* .globe-container {
@@ -712,14 +677,6 @@
 			font-size: 2rem;
 		}
 
-		.instructions {
-			gap: 1rem;
-		}
-
-		.instruction-item {
-			font-size: 0.85rem;
-			padding: 0.6rem 1rem;
-		}
 
 		.legend-items {
 			grid-template-columns: 1fr;
@@ -732,14 +689,8 @@
 			color: #ecf0f1;
 		}
 
-		.instruction-item {
-			background: rgba(44, 62, 80, 0.8);
-			color: #ecf0f1;
-			border: 1px solid rgba(236, 240, 241, 0.2);
-		}
-
-		.instruction-item:hover {
-			background: rgba(52, 73, 94, 0.9);
+		.instructions-footnote {
+			color: #bdc3c7;
 		}
 
 		.location-info {
