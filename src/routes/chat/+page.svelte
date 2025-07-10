@@ -267,6 +267,9 @@
 		<div class="header-info">
 			<h1>Chat with Zuo</h1>
 		</div>
+		<a href="/tomcat" class="tomcat-button" title="Voice-only chat with Tomcat Zuo">
+			🐱
+		</a>
 	</div>
 
 	<div class="messages-container" bind:this={messagesContainer}>
@@ -398,6 +401,30 @@
 		font-weight: 600;
 		position: relative;
 		z-index: 10;
+	}
+
+	.tomcat-button {
+		font-size: 2.5rem;
+		background: rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(10px);
+		border-radius: 20px;
+		width: 4rem;
+		height: 4rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		position: relative;
+		z-index: 10;
+		text-decoration: none;
+		transition: all 0.3s ease;
+		cursor: pointer;
+	}
+
+	.tomcat-button:hover {
+		transform: scale(1.1) rotate(5deg);
+		background: rgba(255, 255, 255, 0.25);
+		box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 	}
 
 	.messages-container {
@@ -679,6 +706,13 @@
 
 		.header-info h1 {
 			font-size: 1.25rem;
+		}
+
+		.tomcat-button {
+			width: 3.5rem;
+			height: 3.5rem;
+			font-size: 2rem;
+			border-radius: 16px;
 		}
 
 		.messages-container {
