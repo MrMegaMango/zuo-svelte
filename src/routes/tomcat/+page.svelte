@@ -181,30 +181,83 @@
 		// Stop any ongoing speech
 		speechSynthesis.cancel();
 		
-		const utterance = new SpeechSynthesisUtterance(text);
-		utterance.rate = 0.9;
-		utterance.pitch = 1.1; // Slightly higher pitch for cat personality
-		utterance.volume = 0.8;
+		// Create multiple utterances with different voice characteristics for a quirky effect
+		const sentences = text.split(/[.!?]+/).filter(s => s.trim());
 		
-		// Use a more playful voice if available
+		sentences.forEach((sentence, index) => {
+			if (!sentence.trim()) return;
+			
+			setTimeout(() => {
+				const utterance = new SpeechSynthesisUtterance(sentence.trim() + '.');
+				
+				// Random voice variations for each sentence to sound more quirky
+				const variations = [
+					{ rate: 0.7, pitch: 1.4, volume: 0.9 }, // High pitched, slow
+					{ rate: 1.2, pitch: 1.6, volume: 0.8 }, // Very high pitched, fast  
+					{ rate: 0.5, pitch: 1.8, volume: 0.7 }, // Extremely high pitched, very slow
+					{ rate: 0.9, pitch: 1.3, volume: 0.85 }, // Slightly high, normal speed
+					{ rate: 0.6, pitch: 1.5, volume: 0.9 }  // High pitched, slow
+				];
+				
+				const variation = variations[index % variations.length];
+				utterance.rate = variation.rate;
+				utterance.pitch = variation.pitch;
+				utterance.volume = variation.volume;
+				
+				// Try to find quirky voices
+				const voices = speechSynthesis?.getVoices() || [];
+				
+				// Prefer weird/unusual voices or high-pitched ones
+				const quirkVoice = voices.find(voice => 
+					voice.lang.startsWith('en') && (
+						voice.name.includes('Whisper') ||
+						voice.name.includes('Novelty') ||
+						voice.name.includes('Bells') ||
+						voice.name.includes('Princess') ||
+						voice.name.includes('Pipe') ||
+						voice.name.includes('Junior') ||
+						voice.name.includes('Fred') ||
+						voice.name.includes('Victoria') ||
+						voice.name.includes('Trinoids') ||
+						voice.name.includes('Cellos') ||
+						voice.name.includes('Albert')
+					)
+				) || voices.find(voice => 
+					voice.lang.startsWith('en') && voice.name.includes('Female')
+				) || voices.find(voice => voice.lang.startsWith('en'));
+				
+				if (quirkVoice) {
+					utterance.voice = quirkVoice;
+				}
+				
+				// Add some pauses and emphasis for cat-like speech patterns
+				if (sentence.includes('meow') || sentence.includes('purr')) {
+					utterance.rate *= 0.7; // Slower for cat sounds
+					utterance.pitch *= 1.2; // Higher for cat sounds
+				}
+				
+				speechSynthesis?.speak(utterance);
+			}, index * 300); // Small delay between sentences for quirky effect
+		});
+	}
+
+	// Debug function to see available voices
+	function listAvailableVoices() {
+		if (!speechSynthesis) return;
 		const voices = speechSynthesis.getVoices();
-		const preferredVoice = voices.find(voice => 
-			voice.lang.startsWith('en') && 
-			(voice.name.includes('Female') || voice.name.includes('Samantha') || voice.name.includes('woman'))
-		) || voices.find(voice => voice.lang.startsWith('en'));
+		console.log('🎤 Available voices on your device:');
+		voices.forEach((voice, index) => {
+			console.log(`${index}: ${voice.name} (${voice.lang}) - ${voice.voiceURI}`);
+		});
 		
-		if (preferredVoice) {
-			utterance.voice = preferredVoice;
-		}
-		
-		speechSynthesis.speak(utterance);
+		addMessage(`Found ${voices.length} voices! Check browser console to see the full list. I'm using quirky ones like ${voices.filter(v => v.name.includes('Fred') || v.name.includes('Princess') || v.name.includes('Whisper')).map(v => v.name).join(', ') || 'default weird variations'}!`, 'tomcat');
 	}
 
 	// Initialize voice on component mount
 	$effect(() => {
 		initializeVoice();
 		
-		// Auto-speak the welcome message
+		// Auto-speak the welcome message with delay
 		setTimeout(() => {
 			if (messages.length > 0) {
 				speakResponse(messages[0].text);
@@ -213,7 +266,8 @@
 		
 		if (speechSynthesis) {
 			speechSynthesis.onvoiceschanged = () => {
-				// Voices loaded
+				// Voices loaded - now we can access them
+				console.log('🔊 Voices loaded for Tomcat!');
 			};
 		}
 	});
@@ -272,6 +326,15 @@
 
 	<div class="voice-container">
 		{#if isVoiceSupported}
+			<div class="voice-info">
+				<div class="quirky-indicator">
+					🎭 Quirky Voice Mode 🐱
+				</div>
+				<button class="voice-test-button" onclick={listAvailableVoices}>
+					🔊 Test Voices
+				</button>
+			</div>
+			
 			<div class="main-voice-control">
 				<button 
 					class="big-listen-button {isListening ? 'listening' : ''}"
@@ -565,8 +628,53 @@
 		backdrop-filter: blur(10px);
 		border-top: 1px solid rgba(217, 119, 6, 0.3);
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		gap: 1.5rem;
+	}
+
+	.voice-info {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.quirky-indicator {
+		background: rgba(255, 255, 255, 0.9);
+		padding: 0.75rem 1.5rem;
+		border-radius: 20px;
+		border: 2px solid #d97706;
+		color: #92400e;
+		font-weight: 600;
+		font-size: 0.9rem;
+		animation: quirkBounce 3s ease-in-out infinite;
+	}
+
+	@keyframes quirkBounce {
+		0%, 100% { transform: scale(1) rotate(0deg); }
+		25% { transform: scale(1.05) rotate(1deg); }
+		75% { transform: scale(0.98) rotate(-1deg); }
+	}
+
+	.voice-test-button {
+		background: rgba(255, 255, 255, 0.1);
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		color: white;
+		padding: 0.75rem 1.5rem;
+		border-radius: 16px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		backdrop-filter: blur(10px);
+	}
+
+	.voice-test-button:hover {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 	}
 
 	.main-voice-control {
@@ -736,6 +844,21 @@
 
 		.voice-container {
 			padding: 1.5rem;
+			gap: 1rem;
+		}
+
+		.voice-info {
+			gap: 0.75rem;
+		}
+
+		.quirky-indicator {
+			font-size: 0.8rem;
+			padding: 0.5rem 1rem;
+		}
+
+		.voice-test-button {
+			font-size: 0.8rem;
+			padding: 0.5rem 1rem;
 		}
 
 		.big-listen-button {
