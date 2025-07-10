@@ -20,6 +20,13 @@
 	let currentMessage = $state('');
 	let isTyping = $state(false);
 	let messagesContainer: HTMLDivElement;
+	
+	// Voice chat state
+	let isVoiceSupported = $state(false);
+	let isListening = $state(false);
+	let isVoiceMode = $state(false);
+	let recognition: any = null;
+	let speechSynthesis: SpeechSynthesis | null = null;
 
 	function addMessage(text: string, sender: 'user' | 'zuo') {
 		const newMessage: Message = {
@@ -94,9 +101,159 @@
 	function handleKeypress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
-			sendMessage();
+			handleSendMessage();
 		}
 	}
+	
+	// Voice functionality
+	function initializeVoice() {
+		// Check for speech synthesis support (TTS)
+		if ('speechSynthesis' in window) {
+			speechSynthesis = window.speechSynthesis;
+		}
+		
+		// Check for speech recognition support (STT)
+		const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+		if (SpeechRecognition) {
+			recognition = new SpeechRecognition();
+			recognition.continuous = false; // Better for mobile
+			recognition.interimResults = true;
+			recognition.lang = 'en-US';
+			
+			recognition.onstart = () => {
+				isListening = true;
+			};
+			
+			recognition.onend = () => {
+				isListening = false;
+			};
+			
+			recognition.onresult = (event: any) => {
+				let finalTranscript = '';
+				let interimTranscript = '';
+				
+				for (let i = event.resultIndex; i < event.results.length; i++) {
+					const transcript = event.results[i][0].transcript;
+					if (event.results[i].isFinal) {
+						finalTranscript += transcript;
+					} else {
+						interimTranscript += transcript;
+					}
+				}
+				
+				// Show interim results in the input
+				if (interimTranscript) {
+					currentMessage = interimTranscript;
+				}
+				
+				// Send final transcript
+				if (finalTranscript.trim()) {
+					currentMessage = finalTranscript.trim();
+					handleSendMessage();
+				}
+			};
+			
+			recognition.onerror = (event: any) => {
+				console.error('Speech recognition error:', event.error);
+				isListening = false;
+				
+				// Provide user feedback for common mobile issues
+				if (event.error === 'not-allowed') {
+					addMessage('Please allow microphone access to use voice chat.', 'zuo');
+				} else if (event.error === 'no-speech') {
+					addMessage('No speech detected. Try speaking closer to your device.', 'zuo');
+				}
+			};
+		}
+		
+		// Check overall voice support
+		isVoiceSupported = !!(speechSynthesis && recognition);
+	}
+	
+	function startListening() {
+		if (!recognition || isListening) return;
+		
+		try {
+			// iOS Safari requires user gesture for speech recognition
+			recognition.start();
+		} catch (error) {
+			console.error('Failed to start speech recognition:', error);
+		}
+	}
+	
+	function stopListening() {
+		if (recognition && isListening) {
+			recognition.stop();
+		}
+	}
+	
+	function toggleVoiceMode() {
+		isVoiceMode = !isVoiceMode;
+		if (!isVoiceMode) {
+			stopListening();
+		}
+	}
+	
+	function speakResponse(text: string) {
+		if (!speechSynthesis || !isVoiceMode) return;
+		
+		// Stop any ongoing speech
+		speechSynthesis.cancel();
+		
+		const utterance = new SpeechSynthesisUtterance(text);
+		utterance.rate = 0.9; // Slightly slower for clarity
+		utterance.pitch = 1.0;
+		utterance.volume = 0.8;
+		
+		// Use a pleasant voice if available
+		const voices = speechSynthesis.getVoices();
+		const preferredVoice = voices.find(voice => 
+			voice.lang.startsWith('en') && 
+			(voice.name.includes('Samantha') || voice.name.includes('Female') || voice.name.includes('woman'))
+		) || voices.find(voice => voice.lang.startsWith('en'));
+		
+		if (preferredVoice) {
+			utterance.voice = preferredVoice;
+		}
+		
+		speechSynthesis.speak(utterance);
+	}
+	
+	// Enhanced send message function that includes voice response
+	async function handleSendMessage() {
+		const userText = currentMessage.trim();
+		if (!userText) return;
+		
+		currentMessage = '';
+		addMessage(userText, 'user');
+		
+		isTyping = true;
+		await scrollToBottom();
+		
+		// Simulate typing delay
+		await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
+		
+		isTyping = false;
+		const response = await getZuoResponse(userText);
+		addMessage(response, 'zuo');
+		
+		// Speak response if in voice mode
+		if (isVoiceMode) {
+			speakResponse(response);
+		}
+	}
+	
+	// Initialize voice on component mount
+	$effect(() => {
+		initializeVoice();
+		
+		// Load voices on mobile Safari (they load asynchronously)
+		if (speechSynthesis) {
+			speechSynthesis.onvoiceschanged = () => {
+				// Voices loaded, update support status if needed
+			};
+		}
+	});
 </script>
 
 <svelte:head>
@@ -138,16 +295,43 @@
 	</div>
 
 	<div class="input-container">
-		<div class="input-wrapper">
+		{#if isVoiceSupported}
+			<div class="voice-controls">
+				<button 
+					class="voice-toggle {isVoiceMode ? 'active' : ''}"
+					onclick={toggleVoiceMode}
+					title={isVoiceMode ? 'Switch to text mode' : 'Switch to voice mode'}
+				>
+					{isVoiceMode ? '🎤' : '⌨️'}
+				</button>
+				
+				{#if isVoiceMode}
+					<button 
+						class="listen-button {isListening ? 'listening' : ''}"
+						onclick={isListening ? stopListening : startListening}
+						disabled={isTyping}
+						title={isListening ? 'Stop listening' : 'Start listening'}
+					>
+						{isListening ? '⏹️' : '🎙️'}
+						{isListening ? 'Listening...' : 'Tap to speak'}
+					</button>
+				{/if}
+			</div>
+		{/if}
+		
+		<div class="input-wrapper {isVoiceMode ? 'voice-mode' : ''}">
 			<textarea
 				bind:value={currentMessage}
 				onkeypress={handleKeypress}
-				placeholder="Type your message..."
+				placeholder={isVoiceMode ? 'Voice input active...' : 'Type your message...'}
 				rows="1"
+				disabled={isVoiceMode && isListening}
 			></textarea>
-			<button onclick={sendMessage} disabled={!currentMessage.trim() || isTyping}>
-				Send
-			</button>
+			{#if !isVoiceMode || currentMessage.trim()}
+				<button onclick={handleSendMessage} disabled={!currentMessage.trim() || isTyping}>
+					Send
+				</button>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -398,6 +582,81 @@
 		box-shadow: none;
 	}
 
+	/* Voice Controls Styles */
+	.voice-controls {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 1rem;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.voice-toggle {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		border: 2px solid #e2e8f0;
+		background: white;
+		font-size: 1.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	}
+
+	.voice-toggle.active {
+		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		border-color: #6366f1;
+		color: white;
+		transform: scale(1.05);
+	}
+
+	.listen-button {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem 1.5rem;
+		border-radius: 24px;
+		border: 2px solid #e2e8f0;
+		background: white;
+		font-size: 1rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		min-height: 60px;
+	}
+
+	.listen-button.listening {
+		background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+		border-color: #ef4444;
+		color: white;
+		animation: pulse 2s infinite;
+	}
+
+	.listen-button:not(.listening):hover {
+		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		border-color: #6366f1;
+		color: white;
+		transform: translateY(-2px);
+	}
+
+	@keyframes pulse {
+		0%, 100% { transform: scale(1); }
+		50% { transform: scale(1.05); }
+	}
+
+	.input-wrapper.voice-mode {
+		opacity: 0.7;
+	}
+
+	.input-wrapper.voice-mode textarea:disabled {
+		background: #f8fafc;
+		color: #64748b;
+	}
+
 	@media (max-width: 768px) {
 		.chat-container {
 			height: calc(100vh - 4rem);
@@ -447,6 +706,24 @@
 		button {
 			padding: 0.625rem 1.25rem;
 			min-width: 70px;
+		}
+
+		/* Mobile voice controls */
+		.voice-controls {
+			gap: 0.75rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.voice-toggle {
+			width: 50px;
+			height: 50px;
+			font-size: 1.25rem;
+		}
+
+		.listen-button {
+			padding: 0.75rem 1.25rem;
+			font-size: 0.9rem;
+			min-height: 50px;
 		}
 	}
 </style>
