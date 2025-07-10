@@ -1,24 +1,28 @@
 import { neon } from '@neondatabase/serverless';
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
+import { browser } from '$app/environment';
 
-// Database connection string from environment - try multiple methods
-const DATABASE_URL = env.DATABASE_URL || env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL;
+// Check if we're in a server context (not prerendering or browser)
+const isServer = typeof process !== 'undefined' && process.env;
 
-// Debug logging for environment variables
-console.log('🔍 Environment check:', {
-  dev,
-  DATABASE_URL_exists: !!DATABASE_URL,
-  DATABASE_URL_length: DATABASE_URL?.length || 0,
-  env_DATABASE_URL: !!env.DATABASE_URL,
-  env_POSTGRES_URL: !!env.POSTGRES_URL,
-  process_DATABASE_URL: !!process.env.DATABASE_URL,
-  process_POSTGRES_URL: !!process.env.POSTGRES_URL,
-  all_env_keys: Object.keys(process.env).filter(key => key.includes('DATABASE') || key.includes('POSTGRES'))
-});
+// Database connection string from environment - only access during runtime
+let DATABASE_URL_VALUE = '';
+if (isServer) {
+  DATABASE_URL_VALUE = process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
+  
+  // Debug logging for environment variables (only on server)
+  console.log('🔍 Environment check:', {
+    dev,
+    DATABASE_URL_exists: !!DATABASE_URL_VALUE,
+    DATABASE_URL_length: DATABASE_URL_VALUE?.length || 0,
+    process_DATABASE_URL: !!process.env.DATABASE_URL,
+    process_POSTGRES_URL: !!process.env.POSTGRES_URL,
+    all_env_keys: Object.keys(process.env).filter(key => key.includes('DATABASE') || key.includes('POSTGRES'))
+  });
+}
 
 // Initialize Neon client (might be null if no DATABASE_URL)
-export const sql = DATABASE_URL ? neon(DATABASE_URL) : null;
+export const sql = DATABASE_URL_VALUE ? neon(DATABASE_URL_VALUE) : null;
 
 // In-memory fallback storage
 const memoryConversations = new Map<string, Array<{role: 'user' | 'assistant', content: string, timestamp: number}>>();

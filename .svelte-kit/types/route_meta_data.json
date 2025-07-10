@@ -5,6 +5,7 @@
 		"src/routes/+layout.js"
 	],
 	"/admin": [
+		"src/routes/admin/+page.ts",
 		"src/routes/admin/+page.server.ts",
 		"src/routes/+layout.js"
 	],
