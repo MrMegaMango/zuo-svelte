@@ -49,8 +49,8 @@
 	}
 
 	// Check if we're in database or memory mode
-	$: isUsingDatabase = data.conversations.some(c => typeof c.id === 'number' && c.id > 1000);
-	$: storageMode = isUsingDatabase ? '🗄️ Database' : '💾 Memory';
+	const isUsingDatabase = $derived(data.conversations.some(c => typeof c.id === 'number' && c.id > 1000));
+	const storageMode = $derived(isUsingDatabase ? '🗄️ Database' : '💾 Memory');
 </script>
 
 <svelte:head>
