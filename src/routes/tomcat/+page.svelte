@@ -181,64 +181,46 @@
 		// Stop any ongoing speech
 		speechSynthesis.cancel();
 		
-		// Create multiple utterances with different voice characteristics for a quirky effect
-		const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+		const utterance = new SpeechSynthesisUtterance(text);
 		
-		sentences.forEach((sentence, index) => {
-			if (!sentence.trim()) return;
-			
-			setTimeout(() => {
-				const utterance = new SpeechSynthesisUtterance(sentence.trim() + '.');
-				
-				// Random voice variations for each sentence to sound more quirky
-				const variations = [
-					{ rate: 0.7, pitch: 1.4, volume: 0.9 }, // High pitched, slow
-					{ rate: 1.2, pitch: 1.6, volume: 0.8 }, // Very high pitched, fast  
-					{ rate: 0.5, pitch: 1.8, volume: 0.7 }, // Extremely high pitched, very slow
-					{ rate: 0.9, pitch: 1.3, volume: 0.85 }, // Slightly high, normal speed
-					{ rate: 0.6, pitch: 1.5, volume: 0.9 }  // High pitched, slow
-				];
-				
-				const variation = variations[index % variations.length];
-				utterance.rate = variation.rate;
-				utterance.pitch = variation.pitch;
-				utterance.volume = variation.volume;
-				
-				// Try to find quirky voices
-				const voices = speechSynthesis?.getVoices() || [];
-				
-				// Prefer weird/unusual voices or high-pitched ones
-				const quirkVoice = voices.find(voice => 
-					voice.lang.startsWith('en') && (
-						voice.name.includes('Whisper') ||
-						voice.name.includes('Novelty') ||
-						voice.name.includes('Bells') ||
-						voice.name.includes('Princess') ||
-						voice.name.includes('Pipe') ||
-						voice.name.includes('Junior') ||
-						voice.name.includes('Fred') ||
-						voice.name.includes('Victoria') ||
-						voice.name.includes('Trinoids') ||
-						voice.name.includes('Cellos') ||
-						voice.name.includes('Albert')
-					)
-				) || voices.find(voice => 
-					voice.lang.startsWith('en') && voice.name.includes('Female')
-				) || voices.find(voice => voice.lang.startsWith('en'));
-				
-				if (quirkVoice) {
-					utterance.voice = quirkVoice;
-				}
-				
-				// Add some pauses and emphasis for cat-like speech patterns
-				if (sentence.includes('meow') || sentence.includes('purr')) {
-					utterance.rate *= 0.7; // Slower for cat sounds
-					utterance.pitch *= 1.2; // Higher for cat sounds
-				}
-				
-				speechSynthesis?.speak(utterance);
-			}, index * 300); // Small delay between sentences for quirky effect
-		});
+		// Natural but character-like voice settings (like Sesame Street style)
+		utterance.rate = 0.85; // Slightly slower for clarity and character
+		utterance.pitch = 1.25; // Moderately higher for friendly, approachable character
+		utterance.volume = 0.9; // Clear volume
+		
+		// Find the best natural-sounding voice
+		const voices = speechSynthesis?.getVoices() || [];
+		
+		// Prefer high-quality, natural voices that sound friendly
+		const naturalVoice = voices.find(voice => 
+			voice.lang.startsWith('en') && (
+				voice.name.includes('Samantha') ||  // macOS/iOS high quality
+				voice.name.includes('Karen') ||     // macOS friendly voice
+				voice.name.includes('Moira') ||     // macOS character voice
+				voice.name.includes('Tessa') ||     // macOS natural voice
+				voice.name.includes('Nicky') ||     // iOS natural voice
+				voice.name.includes('Siri Female') ||
+				voice.name.includes('Google UK English Female') ||
+				voice.name.includes('Microsoft Zira') ||
+				voice.name.includes('Microsoft Hazel')
+			)
+		) || voices.find(voice => 
+			voice.lang.startsWith('en') && voice.name.includes('Female')
+		) || voices.find(voice => voice.lang.startsWith('en'));
+		
+		if (naturalVoice) {
+			utterance.voice = naturalVoice;
+			console.log(`🎭 Tomcat using voice: ${naturalVoice.name}`);
+		}
+		
+		// Add subtle character touches for specific words
+		const processedText = text
+			.replace(/meow/gi, 'mee-ow') // Make meow sound more natural
+			.replace(/purr/gi, 'purrrr'); // Extend purr sound
+		
+		utterance.text = processedText;
+		
+		speechSynthesis?.speak(utterance);
 	}
 
 	// Debug function to see available voices
@@ -250,7 +232,29 @@
 			console.log(`${index}: ${voice.name} (${voice.lang}) - ${voice.voiceURI}`);
 		});
 		
-		addMessage(`Found ${voices.length} voices! Check browser console to see the full list. I'm using quirky ones like ${voices.filter(v => v.name.includes('Fred') || v.name.includes('Princess') || v.name.includes('Whisper')).map(v => v.name).join(', ') || 'default weird variations'}!`, 'tomcat');
+		// Find the voice that would be selected
+		const selectedVoice = voices.find(voice => 
+			voice.lang.startsWith('en') && (
+				voice.name.includes('Samantha') ||
+				voice.name.includes('Karen') ||
+				voice.name.includes('Moira') ||
+				voice.name.includes('Tessa') ||
+				voice.name.includes('Nicky') ||
+				voice.name.includes('Siri Female') ||
+				voice.name.includes('Google UK English Female') ||
+				voice.name.includes('Microsoft Zira') ||
+				voice.name.includes('Microsoft Hazel')
+			)
+		) || voices.find(voice => 
+			voice.lang.startsWith('en') && voice.name.includes('Female')
+		) || voices.find(voice => voice.lang.startsWith('en'));
+		
+		addMessage(`Purr! Found ${voices.length} voices on your device. I'm using "${selectedVoice?.name || 'default'}" for my natural Tomcat voice! Check the console to see all available options.`, 'tomcat');
+		
+		// Demo the voice
+		setTimeout(() => {
+			speakResponse("Meow! This is how I sound with my natural voice. Much better than those crazy robot variations, don't you think?");
+		}, 1000);
 	}
 
 	// Initialize voice on component mount
@@ -328,10 +332,10 @@
 		{#if isVoiceSupported}
 			<div class="voice-info">
 				<div class="quirky-indicator">
-					🎭 Quirky Voice Mode 🐱
+					🎭 Natural Tomcat Voice 🐱
 				</div>
 				<button class="voice-test-button" onclick={listAvailableVoices}>
-					🔊 Test Voices
+					🔊 Check Voice
 				</button>
 			</div>
 			
