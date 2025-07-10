@@ -48,8 +48,8 @@
 		goto('/admin');
 	}
 
-	// Check if we're in database or memory mode
-	const isUsingDatabase = $derived(data.conversations.some(c => typeof c.id === 'number' && c.id > 1000));
+	// Check if we're in database or memory mode (from server)
+	const isUsingDatabase = $derived(data.isDatabaseConnected);
 	const storageMode = $derived(isUsingDatabase ? '🗄️ Database' : '💾 Memory');
 </script>
 

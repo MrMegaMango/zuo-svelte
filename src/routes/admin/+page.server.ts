@@ -1,4 +1,4 @@
-import { getAllConversations, getConversationMessages, initializeDatabase, type ConversationSummary, type ChatMessage } from '$lib/database.js';
+import { getAllConversations, getConversationMessages, initializeDatabase, isDatabaseConnected, type ConversationSummary, type ChatMessage } from '$lib/database.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -35,7 +35,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		
 		return {
 			conversations,
-			selectedConversation
+			selectedConversation,
+			isDatabaseConnected: isDatabaseConnected()
 		};
 	} catch (error) {
 		console.error('⚠️  Error loading admin data:', (error as Error).message);
@@ -46,7 +47,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			selectedConversation: {
 				conversation: null,
 				messages: []
-			}
+			},
+			isDatabaseConnected: isDatabaseConnected()
 		};
 	}
 }; 

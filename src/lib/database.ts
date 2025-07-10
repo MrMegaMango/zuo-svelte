@@ -2,27 +2,43 @@ import { neon } from '@neondatabase/serverless';
 import { dev } from '$app/environment';
 import { browser } from '$app/environment';
 
-// Check if we're in a server context (not prerendering or browser)
-const isServer = typeof process !== 'undefined' && process.env;
+// Lazy initialization of database connection
+let sql: any = null;
+let sqlInitialized = false;
 
-// Database connection string from environment - only access during runtime
-let DATABASE_URL_VALUE = '';
-if (isServer) {
-  DATABASE_URL_VALUE = process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
+function getSql() {
+  if (!sqlInitialized) {
+    sqlInitialized = true;
+    
+    // Get environment variables at runtime
+    const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
+    
+    // Debug logging for environment variables
+    console.log('🔍 Environment check:', {
+      dev,
+      DATABASE_URL_exists: !!DATABASE_URL,
+      DATABASE_URL_length: DATABASE_URL?.length || 0,
+      process_DATABASE_URL: !!process.env.DATABASE_URL,
+      process_POSTGRES_URL: !!process.env.POSTGRES_URL,
+      all_env_keys: Object.keys(process.env || {}).filter(key => key.includes('DATABASE') || key.includes('POSTGRES'))
+    });
+    
+    if (DATABASE_URL) {
+      sql = neon(DATABASE_URL);
+    }
+  }
   
-  // Debug logging for environment variables (only on server)
-  console.log('🔍 Environment check:', {
-    dev,
-    DATABASE_URL_exists: !!DATABASE_URL_VALUE,
-    DATABASE_URL_length: DATABASE_URL_VALUE?.length || 0,
-    process_DATABASE_URL: !!process.env.DATABASE_URL,
-    process_POSTGRES_URL: !!process.env.POSTGRES_URL,
-    all_env_keys: Object.keys(process.env).filter(key => key.includes('DATABASE') || key.includes('POSTGRES'))
-  });
+  return sql;
 }
 
-// Initialize Neon client (might be null if no DATABASE_URL)
-export const sql = DATABASE_URL_VALUE ? neon(DATABASE_URL_VALUE) : null;
+// Export the sql connection 
+export { sql };
+
+// Function to check if database is available
+export function isDatabaseConnected(): boolean {
+  const dbConnection = getSql();
+  return !!dbConnection && isDatabaseAvailable;
+}
 
 // In-memory fallback storage
 const memoryConversations = new Map<string, Array<{role: 'user' | 'assistant', content: string, timestamp: number}>>();
@@ -33,7 +49,8 @@ let isDatabaseAvailable = false;
 // Initialize database schema (graceful failure)
 export async function initializeDatabase() {
   console.log('🚀 Initializing database...');
-  if (!sql) {
+  const dbConnection = getSql();
+  if (!dbConnection) {
     console.log('📝 Database not configured - using in-memory storage for this session');
     console.log('💡 To enable database: Set DATABASE_URL environment variable');
     return;
@@ -43,7 +60,7 @@ export async function initializeDatabase() {
 
   try {
     // Create conversations table
-    await sql`
+    await dbConnection`
       CREATE TABLE IF NOT EXISTS conversations (
         id SERIAL PRIMARY KEY,
         client_ip VARCHAR(45) NOT NULL,
@@ -53,7 +70,7 @@ export async function initializeDatabase() {
     `;
 
     // Create messages table
-    await sql`
+    await dbConnection`
       CREATE TABLE IF NOT EXISTS messages (
         id SERIAL PRIMARY KEY,
         conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
@@ -64,16 +81,16 @@ export async function initializeDatabase() {
     `;
 
     // Create indexes for better performance
-    await sql`
+    await dbConnection`
       CREATE INDEX IF NOT EXISTS idx_conversations_client_ip ON conversations (client_ip)
     `;
-    await sql`
+    await dbConnection`
       CREATE INDEX IF NOT EXISTS idx_conversations_updated_at ON conversations (updated_at)
     `;
-    await sql`
+    await dbConnection`
       CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages (conversation_id)
     `;
-    await sql`
+    await dbConnection`
       CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages (timestamp)
     `;
 
@@ -87,14 +104,15 @@ export async function initializeDatabase() {
 
 // Helper functions with graceful fallback
 export async function getOrCreateConversation(clientIP: string): Promise<number | string> {
-  if (!isDatabaseAvailable || !sql) {
+  const dbConnection = getSql();
+  if (!isDatabaseAvailable || !dbConnection) {
     // Return client IP as conversation identifier for in-memory storage
     return clientIP;
   }
 
   try {
     // First try to get existing conversation
-    const existing = await sql`
+    const existing = await dbConnection`
       SELECT id FROM conversations 
       WHERE client_ip = ${clientIP} 
       ORDER BY updated_at DESC 
@@ -106,7 +124,7 @@ export async function getOrCreateConversation(clientIP: string): Promise<number 
     }
 
     // Create new conversation if none exists
-    const newConversation = await sql`
+    const newConversation = await dbConnection`
       INSERT INTO conversations (client_ip) 
       VALUES (${clientIP}) 
       RETURNING id
@@ -121,7 +139,8 @@ export async function getOrCreateConversation(clientIP: string): Promise<number 
 }
 
 export async function saveMessage(conversationId: number | string, role: 'user' | 'assistant', content: string) {
-  if (!isDatabaseAvailable || !sql || typeof conversationId === 'string') {
+  const dbConnection = getSql();
+  if (!isDatabaseAvailable || !dbConnection || typeof conversationId === 'string') {
     // Use in-memory storage
     const clientIP = conversationId as string;
     if (!memoryConversations.has(clientIP)) {
@@ -140,13 +159,13 @@ export async function saveMessage(conversationId: number | string, role: 'user' 
 
   try {
     // Insert the message
-    await sql`
+    await dbConnection`
       INSERT INTO messages (conversation_id, role, content) 
       VALUES (${conversationId}, ${role}, ${content})
     `;
 
     // Update conversation timestamp
-    await sql`
+    await dbConnection`
       UPDATE conversations 
       SET updated_at = CURRENT_TIMESTAMP 
       WHERE id = ${conversationId}
@@ -158,7 +177,8 @@ export async function saveMessage(conversationId: number | string, role: 'user' 
 }
 
 export async function getRecentMessages(conversationId: number | string, limit: number = 10) {
-  if (!isDatabaseAvailable || !sql || typeof conversationId === 'string') {
+  const dbConnection = getSql();
+  if (!isDatabaseAvailable || !dbConnection || typeof conversationId === 'string') {
     // Use in-memory storage
     const clientIP = conversationId as string;
     const conversation = memoryConversations.get(clientIP) || [];
@@ -170,7 +190,7 @@ export async function getRecentMessages(conversationId: number | string, limit: 
   }
 
   try {
-    const messages = await sql`
+    const messages = await dbConnection`
       SELECT role, content, timestamp 
       FROM messages 
       WHERE conversation_id = ${conversationId} 
@@ -188,7 +208,8 @@ export async function getRecentMessages(conversationId: number | string, limit: 
 }
 
 export async function getAllConversations() {
-  if (!isDatabaseAvailable || !sql) {
+  const dbConnection = getSql();
+  if (!isDatabaseAvailable || !dbConnection) {
     // Convert in-memory conversations to admin format
     const conversations = [];
     for (const [clientIP, messages] of memoryConversations.entries()) {
@@ -207,7 +228,7 @@ export async function getAllConversations() {
   }
 
   try {
-    const conversations = await sql`
+    const conversations = await dbConnection`
       SELECT 
         c.id,
         c.client_ip,
@@ -230,12 +251,13 @@ export async function getAllConversations() {
 }
 
 export async function getConversationMessages(conversationId: number) {
-  if (!isDatabaseAvailable || !sql) {
+  const dbConnection = getSql();
+  if (!isDatabaseAvailable || !dbConnection) {
     return [];
   }
 
   try {
-    const messages = await sql`
+    const messages = await dbConnection`
       SELECT id, role, content, timestamp 
       FROM messages 
       WHERE conversation_id = ${conversationId} 
