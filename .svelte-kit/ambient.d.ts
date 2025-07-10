@@ -82,6 +82,7 @@ declare module '$env/static/private' {
 	export const SHELL: string;
 	export const npm_package_version: string;
 	export const npm_lifecycle_event: string;
+	export const NODE_PATH: string;
 	export const LESSCLOSE: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const npm_config_globalconfig: string;
@@ -188,6 +189,7 @@ declare module '$env/dynamic/private' {
 		SHELL: string;
 		npm_package_version: string;
 		npm_lifecycle_event: string;
+		NODE_PATH: string;
 		LESSCLOSE: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		npm_config_globalconfig: string;

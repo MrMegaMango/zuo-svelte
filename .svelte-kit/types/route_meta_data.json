@@ -27,6 +27,10 @@
 		"src/routes/test-globe/+page.ts",
 		"src/routes/+layout.js"
 	],
+	"/tomcat": [
+		"src/routes/tomcat/+page.ts",
+		"src/routes/+layout.js"
+	],
 	"/world-map": [
 		"src/routes/world-map/+page.ts",
 		"src/routes/+layout.js"
