@@ -1,10 +1,21 @@
 import { neon } from '@neondatabase/serverless';
 import { dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
 
-// Database connection string from environment
-const DATABASE_URL = dev 
-  ? process.env.DATABASE_URL || process.env.POSTGRES_URL
-  : process.env.DATABASE_URL || process.env.POSTGRES_URL;
+// Database connection string from environment - try multiple methods
+const DATABASE_URL = env.DATABASE_URL || env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL;
+
+// Debug logging for environment variables
+console.log('🔍 Environment check:', {
+  dev,
+  DATABASE_URL_exists: !!DATABASE_URL,
+  DATABASE_URL_length: DATABASE_URL?.length || 0,
+  env_DATABASE_URL: !!env.DATABASE_URL,
+  env_POSTGRES_URL: !!env.POSTGRES_URL,
+  process_DATABASE_URL: !!process.env.DATABASE_URL,
+  process_POSTGRES_URL: !!process.env.POSTGRES_URL,
+  all_env_keys: Object.keys(process.env).filter(key => key.includes('DATABASE') || key.includes('POSTGRES'))
+});
 
 // Initialize Neon client (might be null if no DATABASE_URL)
 export const sql = DATABASE_URL ? neon(DATABASE_URL) : null;
@@ -17,10 +28,14 @@ let isDatabaseAvailable = false;
 
 // Initialize database schema (graceful failure)
 export async function initializeDatabase() {
+  console.log('🚀 Initializing database...');
   if (!sql) {
     console.log('📝 Database not configured - using in-memory storage for this session');
+    console.log('💡 To enable database: Set DATABASE_URL environment variable');
     return;
   }
+  
+  console.log('✅ Database connection available, attempting to initialize schema...');
 
   try {
     // Create conversations table
