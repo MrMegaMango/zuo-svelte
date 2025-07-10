@@ -11,7 +11,7 @@
 	let messages = $state<Message[]>([
 		{
 			id: '1',
-			text: "Meow! I'm Tomcat Zuo! 🐱 Talk to me with your voice - I only speak in meows and purrs... just kidding! Ask me anything!",
+			text: "Meow! I'm Tomcat Zuo! 🐱 I've upgraded my voice to sound much more human-like and natural! Talk to me with your voice - I now have realistic speech patterns, emotional expression, and conversational flow. Ask me anything!",
 			sender: 'tomcat',
 			timestamp: new Date()
 		}
@@ -181,28 +181,67 @@
 		// Stop any ongoing speech
 		speechSynthesis.cancel();
 		
+		// Enhanced text processing for more natural, human-like speech
+		const processedText = text
+			// Character-specific pronunciations
+			.replace(/meow/gi, 'mee-ow')
+			.replace(/purr/gi, 'purrrr')
+			// Natural speech patterns - add pauses and inflection
+			.replace(/\. /g, '. <break time="0.5s"/> ')
+			.replace(/\? /g, '? <break time="0.4s"/> ')
+			.replace(/! /g, '! <break time="0.4s"/> ')
+			.replace(/\, /g, ', <break time="0.2s"/> ')
+			// Add emphasis to important words
+			.replace(/\b(really|very|absolutely|definitely|amazing|incredible|awesome)\b/gi, '<emphasis level="strong">$1</emphasis>')
+			// Natural conversational fillers for more human feel
+			.replace(/^(Well|So|Actually|You know|I think)/gi, '<prosody rate="0.9">$1</prosody>')
+			// Emotional expressions
+			.replace(/😸|😺|😻/g, '<prosody pitch="+20%">meow</prosody>')
+			.replace(/🐱/g, '<prosody pitch="+10%" rate="0.9">purr</prosody>');
+
+		// Split into sentences for more natural delivery with varied prosody
+		const sentences = processedText.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+		
+		if (sentences.length > 1) {
+			// Multi-sentence responses: vary prosody for natural conversation flow
+			sentences.forEach((sentence, index) => {
+				setTimeout(() => {
+					speakSentenceWithNaturalProsody(sentence, index, sentences.length);
+				}, index * 100); // Slight delay between sentences for natural pacing
+			});
+		} else {
+			// Single sentence: apply natural prosody
+			speakSentenceWithNaturalProsody(processedText, 0, 1);
+		}
+	}
+
+	function speakSentenceWithNaturalProsody(text: string, sentenceIndex: number, totalSentences: number) {
 		const utterance = new SpeechSynthesisUtterance(text);
 		
-		// Natural but character-like voice settings (like Sesame Street style)
-		utterance.rate = 0.85; // Slightly slower for clarity and character
-		utterance.pitch = 1.25; // Moderately higher for friendly, approachable character
-		utterance.volume = 0.9; // Clear volume
-		
-		// Find the best natural-sounding voice
+		// Find the best natural-sounding voice with enhanced selection
 		const voices = speechSynthesis?.getVoices() || [];
 		
-		// Prefer high-quality, natural voices that sound friendly
+		// Prioritize the most natural, expressive voices available
 		const naturalVoice = voices.find(voice => 
 			voice.lang.startsWith('en') && (
-				voice.name.includes('Samantha') ||  // macOS/iOS high quality
-				voice.name.includes('Karen') ||     // macOS friendly voice
-				voice.name.includes('Moira') ||     // macOS character voice
-				voice.name.includes('Tessa') ||     // macOS natural voice
-				voice.name.includes('Nicky') ||     // iOS natural voice
+				// Premium quality voices (neural/enhanced)
+				voice.name.includes('Neural') ||
+				voice.name.includes('Enhanced') ||
+				// High-quality platform voices
+				voice.name.includes('Samantha') ||  // macOS premium
+				voice.name.includes('Karen') ||     // macOS warm & friendly
+				voice.name.includes('Moira') ||     // macOS Irish accent (very natural)
+				voice.name.includes('Tessa') ||     // macOS South African (expressive)
+				voice.name.includes('Nicky') ||     // iOS Australian (friendly)
 				voice.name.includes('Siri Female') ||
+				// Google's natural voices
 				voice.name.includes('Google UK English Female') ||
-				voice.name.includes('Microsoft Zira') ||
-				voice.name.includes('Microsoft Hazel')
+				voice.name.includes('Google US English Female') ||
+				// Microsoft's enhanced voices
+				voice.name.includes('Microsoft Aria') ||
+				voice.name.includes('Microsoft Jenny') ||
+				voice.name.includes('Microsoft Michelle') ||
+				voice.name.includes('Microsoft Zira')
 			)
 		) || voices.find(voice => 
 			voice.lang.startsWith('en') && voice.name.includes('Female')
@@ -210,15 +249,48 @@
 		
 		if (naturalVoice) {
 			utterance.voice = naturalVoice;
-			console.log(`🎭 Tomcat using voice: ${naturalVoice.name}`);
 		}
 		
-		// Add subtle character touches for specific words
-		const processedText = text
-			.replace(/meow/gi, 'mee-ow') // Make meow sound more natural
-			.replace(/purr/gi, 'purrrr'); // Extend purr sound
+		// Human-like prosody variations for natural conversation flow
+		const baseRate = 0.88; // Slightly slower than default for clarity
+		const basePitch = 1.15; // Warm, friendly tone
 		
-		utterance.text = processedText;
+		// Vary prosody based on sentence position and content for conversational flow
+		if (sentenceIndex === 0) {
+			// First sentence: confident, engaging
+			utterance.rate = baseRate + 0.05;
+			utterance.pitch = basePitch + 0.1;
+		} else if (sentenceIndex === totalSentences - 1) {
+			// Last sentence: conclusive, slightly slower
+			utterance.rate = baseRate - 0.05;
+			utterance.pitch = basePitch - 0.05;
+		} else {
+			// Middle sentences: natural variation
+			utterance.rate = baseRate + (Math.random() * 0.1 - 0.05);
+			utterance.pitch = basePitch + (Math.random() * 0.1 - 0.05);
+		}
+		
+		// Content-based prosody adjustments for emotional expression
+		if (text.includes('!')) {
+			utterance.pitch *= 1.08; // Excited/emphatic
+			utterance.rate *= 1.02;
+		} else if (text.includes('?')) {
+			utterance.pitch *= 1.12; // Questioning intonation
+			utterance.rate *= 0.98;
+		} else if (text.match(/\b(sorry|sad|unfortunately)\b/i)) {
+			utterance.pitch *= 0.92; // Sympathetic tone
+			utterance.rate *= 0.95;
+		} else if (text.match(/\b(amazing|awesome|great|wonderful|fantastic)\b/i)) {
+			utterance.pitch *= 1.1; // Enthusiastic
+			utterance.rate *= 1.05;
+		}
+		
+		// Ensure values stay within reasonable bounds
+		utterance.rate = Math.max(0.7, Math.min(1.2, utterance.rate));
+		utterance.pitch = Math.max(0.8, Math.min(1.5, utterance.pitch));
+		utterance.volume = 0.85; // Slightly softer for comfort
+		
+		console.log(`🎭 Tomcat voice [${sentenceIndex + 1}/${totalSentences}]: ${naturalVoice?.name} | Rate: ${utterance.rate.toFixed(2)} | Pitch: ${utterance.pitch.toFixed(2)}`);
 		
 		speechSynthesis?.speak(utterance);
 	}
@@ -232,9 +304,11 @@
 			console.log(`${index}: ${voice.name} (${voice.lang}) - ${voice.voiceURI}`);
 		});
 		
-		// Find the voice that would be selected
+		// Find the voice that would be selected with enhanced selection
 		const selectedVoice = voices.find(voice => 
 			voice.lang.startsWith('en') && (
+				voice.name.includes('Neural') ||
+				voice.name.includes('Enhanced') ||
 				voice.name.includes('Samantha') ||
 				voice.name.includes('Karen') ||
 				voice.name.includes('Moira') ||
@@ -242,18 +316,21 @@
 				voice.name.includes('Nicky') ||
 				voice.name.includes('Siri Female') ||
 				voice.name.includes('Google UK English Female') ||
-				voice.name.includes('Microsoft Zira') ||
-				voice.name.includes('Microsoft Hazel')
+				voice.name.includes('Google US English Female') ||
+				voice.name.includes('Microsoft Aria') ||
+				voice.name.includes('Microsoft Jenny') ||
+				voice.name.includes('Microsoft Michelle') ||
+				voice.name.includes('Microsoft Zira')
 			)
 		) || voices.find(voice => 
 			voice.lang.startsWith('en') && voice.name.includes('Female')
 		) || voices.find(voice => voice.lang.startsWith('en'));
 		
-		addMessage(`Purr! Found ${voices.length} voices on your device. I'm using "${selectedVoice?.name || 'default'}" for my natural Tomcat voice! Check the console to see all available options.`, 'tomcat');
+		addMessage(`Purr! Found ${voices.length} voices on your device. I'm using "${selectedVoice?.name || 'default'}" with enhanced human-like prosody! Check the console to see all available options.`, 'tomcat');
 		
-		// Demo the voice
+		// Demo the enhanced voice with natural prosody
 		setTimeout(() => {
-			speakResponse("Meow! This is how I sound with my natural voice. Much better than those crazy robot variations, don't you think?");
+			speakResponse("Meow! This is my new human-like voice! I now have natural conversation flow, emotional expression, and much more realistic speech patterns. Pretty amazing, don't you think? 😸");
 		}, 1000);
 	}
 
@@ -332,10 +409,10 @@
 		{#if isVoiceSupported}
 			<div class="voice-info">
 				<div class="quirky-indicator">
-					🎭 Natural Tomcat Voice 🐱
+					🎭 Human-Like Tomcat Voice 🐱
 				</div>
 				<button class="voice-test-button" onclick={listAvailableVoices}>
-					🔊 Check Voice
+					🔊 Test Enhanced Voice
 				</button>
 			</div>
 			
