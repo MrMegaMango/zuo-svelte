@@ -11,7 +11,7 @@
 	let messages = $state<Message[]>([
 		{
 			id: '1',
-			text: "Meow! I'm Tomcat Zuo! 🐱 I've completely rebuilt my voice system to speak naturally like a human! I now use advanced text processing, emotional context analysis, and intelligent speech segmentation. Talk to me with your voice - you'll hear the difference immediately!",
+			text: "Meow! I'm Tomcat Zuo! 🐱 But I have yet to be trained to do the cat voice. Although I've got text processing, emotional context analysis, and intelligent speech segmentation. Talk to me with your voice",
 			sender: 'tomcat',
 			timestamp: new Date()
 		}
@@ -24,6 +24,8 @@
 	let speechSynthesis: SpeechSynthesis | null = null;
 	let messagesContainer: HTMLDivElement;
 	let currentTranscript = $state('');
+	let needsUserGesture = $state(true);
+	let isIOS = $state(false);
 
 	function addMessage(text: string, sender: 'user' | 'tomcat') {
 		const newMessage: Message = {
@@ -79,9 +81,19 @@
 	}
 
 	function initializeVoice() {
+		// Detect iOS
+		isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+		
 		// Check for speech synthesis support (TTS)
 		if ('speechSynthesis' in window) {
 			speechSynthesis = window.speechSynthesis;
+			
+			// iOS Safari fix: voices aren't immediately available
+			if (speechSynthesis.getVoices().length === 0) {
+				speechSynthesis.addEventListener('voiceschanged', () => {
+					console.log('🔊 Voices loaded for iOS');
+				});
+			}
 		}
 		
 		// Check for speech recognition support (STT)
@@ -144,6 +156,11 @@
 
 	function startListening() {
 		if (!recognition || isListening) return;
+		
+		// Enable audio with user gesture (required for iOS)
+		if (needsUserGesture) {
+			enableAudioWithUserGesture();
+		}
 		
 		try {
 			recognition.start();
@@ -270,8 +287,25 @@
 		return context;
 	}
 
+	function enableAudioWithUserGesture() {
+		if (!speechSynthesis) return;
+		
+		// Test utterance to enable audio on iOS
+		const testUtterance = new SpeechSynthesisUtterance('');
+		testUtterance.volume = 0;
+		speechSynthesis.speak(testUtterance);
+		needsUserGesture = false;
+		
+		console.log('🎵 Audio enabled with user gesture');
+	}
+
 	function speakResponse(text: string) {
 		if (!speechSynthesis) return;
+		
+		// iOS requires user gesture to enable audio
+		if (needsUserGesture) {
+			enableAudioWithUserGesture();
+		}
 		
 		// Stop any ongoing speech
 		speechSynthesis.cancel();
@@ -279,13 +313,20 @@
 		const segments = createNaturalSpeechSegments(text);
 		const emotionalContext = getEmotionalContext(text);
 		
-		// Speak segments with natural timing and emotional context
-		segments.forEach((segment, index) => {
-			const delay = index * 800; // Natural pause between segments
-			setTimeout(() => {
+		if (isIOS) {
+			// iOS: speak segments immediately without delays to avoid autoplay restrictions
+			segments.forEach((segment, index) => {
 				speakSegmentWithEmotion(segment, index, segments.length, emotionalContext);
-			}, delay);
-		});
+			});
+		} else {
+			// Desktop: use natural timing with delays
+			segments.forEach((segment, index) => {
+				const delay = index * 800;
+				setTimeout(() => {
+					speakSegmentWithEmotion(segment, index, segments.length, emotionalContext);
+				}, delay);
+			});
+		}
 	}
 
 	function speakSegmentWithEmotion(text: string, segmentIndex: number, totalSegments: number, emotion: any) {
@@ -293,17 +334,35 @@
 		
 		// Find the best natural voice
 		const voices = speechSynthesis?.getVoices() || [];
-		const naturalVoice = voices.find(voice => 
-			voice.lang.startsWith('en') && (
-				voice.name.includes('Samantha') ||  // Premium natural voice
-				voice.name.includes('Karen') ||     // Warm and expressive
-				voice.name.includes('Google UK English Female') ||
-				voice.name.includes('Microsoft Aria') ||
-				voice.name.includes('Microsoft Jenny')
-			)
-		) || voices.find(voice => 
-			voice.lang.startsWith('en') && voice.name.includes('Female')
-		) || voices.find(voice => voice.lang.startsWith('en'));
+		let naturalVoice;
+		
+		if (isIOS) {
+			// iOS-specific voice selection
+			naturalVoice = voices.find(voice => 
+				voice.lang.startsWith('en') && (
+					voice.name.includes('Samantha') ||  // iOS premium voice
+					voice.name.includes('Karen') ||     // iOS friendly voice
+					voice.name.includes('Nicky') ||     // iOS Australian
+					voice.name.includes('Moira') ||     // iOS Irish
+					voice.name.includes('Tessa')        // iOS South African
+				)
+			) || voices.find(voice => 
+				voice.lang.startsWith('en') && voice.localService
+			) || voices.find(voice => voice.lang.startsWith('en'));
+		} else {
+			// Desktop voice selection
+			naturalVoice = voices.find(voice => 
+				voice.lang.startsWith('en') && (
+					voice.name.includes('Samantha') ||
+					voice.name.includes('Karen') ||
+					voice.name.includes('Google UK English Female') ||
+					voice.name.includes('Microsoft Aria') ||
+					voice.name.includes('Microsoft Jenny')
+				)
+			) || voices.find(voice => 
+				voice.lang.startsWith('en') && voice.name.includes('Female')
+			) || voices.find(voice => voice.lang.startsWith('en'));
+		}
 		
 		if (naturalVoice) {
 			utterance.voice = naturalVoice;
@@ -406,20 +465,27 @@
 	$effect(() => {
 		initializeVoice();
 		
-		// Auto-speak the welcome message with delay
-		setTimeout(() => {
-			if (messages.length > 0) {
-				speakResponse(messages[0].text);
-			}
-		}, 1000);
+		// Don't auto-speak on iOS due to autoplay restrictions
+		if (!isIOS) {
+			setTimeout(() => {
+				if (messages.length > 0) {
+					speakResponse(messages[0].text);
+				}
+			}, 1000);
+		}
 		
 		if (speechSynthesis) {
 			speechSynthesis.onvoiceschanged = () => {
-				// Voices loaded - now we can access them
 				console.log('🔊 Voices loaded for Tomcat!');
 			};
 		}
 	});
+
+	function speakWelcomeMessage() {
+		if (messages.length > 0) {
+			speakResponse(messages[0].text);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -479,9 +545,15 @@
 				<div class="quirky-indicator">
 					🎭 Human-Like Tomcat Voice 🐱
 				</div>
-				<button class="voice-test-button" onclick={listAvailableVoices}>
-					🔊 Test Enhanced Voice
-				</button>
+				{#if isIOS && needsUserGesture}
+					<button class="voice-test-button" onclick={speakWelcomeMessage}>
+						🔊 Enable Audio & Hear Welcome
+					</button>
+				{:else}
+					<button class="voice-test-button" onclick={listAvailableVoices}>
+						🔊 Test Enhanced Voice
+					</button>
+				{/if}
 			</div>
 			
 			<div class="main-voice-control">
