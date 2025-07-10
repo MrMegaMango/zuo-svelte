@@ -8,6 +8,25 @@
 	}
 	let { data }: Props = $props();
 
+	// Simple admin authentication
+	let isAuthenticated = $state(false);
+	let password = $state('');
+	const ADMIN_PASSWORD = 'admin123'; // In production, use environment variables
+
+	function authenticate() {
+		if (password === ADMIN_PASSWORD) {
+			isAuthenticated = true;
+		} else {
+			alert('Incorrect password');
+			password = '';
+		}
+	}
+
+	function logout() {
+		isAuthenticated = false;
+		password = '';
+	}
+
 	function formatTimestamp(timestamp: string) {
 		return new Date(timestamp).toLocaleString();
 	}
@@ -35,92 +54,181 @@
 	<meta name="description" content="Admin interface for viewing chat conversations" />
 </svelte:head>
 
-<div class="admin-container">
-	<div class="admin-header">
-		<h1>💬 Chat Administration</h1>
-		<p>View and manage all user conversations</p>
+{#if !isAuthenticated}
+	<div class="auth-container">
+		<div class="auth-box">
+			<h1>🔐 Admin Access</h1>
+			<p>Enter admin password to view chat conversations</p>
+			<form onsubmit={(e) => { e.preventDefault(); authenticate(); }}>
+				<input 
+					type="password" 
+					bind:value={password}
+					placeholder="Admin password"
+					class="password-input"
+				/>
+				<button type="submit" class="auth-button">Access Admin</button>
+			</form>
+			<p class="hint">This interface is for authorized administrators only</p>
+		</div>
 	</div>
-
-	<div class="admin-content">
-		<div class="conversations-panel">
-			<div class="panel-header">
-				<h2>Conversations ({data.conversations.length})</h2>
+{:else}
+	<div class="admin-container">
+		<div class="admin-header">
+			<h1>💬 Chat Administration</h1>
+			<div class="header-actions">
+				<p>View and manage all user conversations</p>
+				<button class="logout-btn" onclick={logout}>Logout</button>
 			</div>
-			
-			<div class="conversations-list">
-				{#each data.conversations as conversation}
-					<button 
-						class="conversation-item"
-						class:selected={data.selectedConversation.conversation?.id === conversation.id}
-						onclick={() => selectConversation(conversation.id)}
-					>
-						<div class="conversation-meta">
-							<div class="ip">🌐 {formatIP(conversation.client_ip)}</div>
-							<div class="message-count">💬 {conversation.message_count} messages</div>
-						</div>
-						<div class="conversation-times">
-							<div class="started">Started: {formatTimestamp(conversation.created_at)}</div>
-							{#if conversation.last_message_at}
-								<div class="last-message">Last: {formatTimestamp(conversation.last_message_at)}</div>
-							{/if}
-						</div>
-					</button>
-				{/each}
+		</div>
+
+		<div class="admin-content">
+			<div class="conversations-panel">
+				<div class="panel-header">
+					<h2>Conversations ({data.conversations.length})</h2>
+				</div>
 				
-				{#if data.conversations.length === 0}
-					<div class="no-conversations">
-						<p>No conversations yet!</p>
-						<p class="hint">Chat messages will appear here once users start chatting.</p>
+				<div class="conversations-list">
+					{#each data.conversations as conversation}
+						<button 
+							class="conversation-item"
+							class:selected={data.selectedConversation.conversation?.id === conversation.id}
+							onclick={() => selectConversation(conversation.id)}
+						>
+							<div class="conversation-meta">
+								<div class="ip">🌐 {formatIP(conversation.client_ip)}</div>
+								<div class="message-count">💬 {conversation.message_count} messages</div>
+							</div>
+							<div class="conversation-times">
+								<div class="started">Started: {formatTimestamp(conversation.created_at)}</div>
+								{#if conversation.last_message_at}
+									<div class="last-message">Last: {formatTimestamp(conversation.last_message_at)}</div>
+								{/if}
+							</div>
+						</button>
+					{/each}
+					
+					{#if data.conversations.length === 0}
+						<div class="no-conversations">
+							<p>No conversations yet!</p>
+							<p class="hint">Chat messages will appear here once users start chatting.</p>
+						</div>
+					{/if}
+				</div>
+			</div>
+
+			<div class="messages-panel">
+				{#if data.selectedConversation.conversation}
+					<div class="panel-header">
+						<h2>
+							Conversation with {formatIP(data.selectedConversation.conversation.client_ip)}
+						</h2>
+						<button class="close-btn" onclick={clearSelection}>✕</button>
+					</div>
+					
+					<div class="conversation-details">
+						<div class="detail-item">
+							<strong>Started:</strong> {formatTimestamp(data.selectedConversation.conversation.created_at)}
+						</div>
+						<div class="detail-item">
+							<strong>Last Updated:</strong> {formatTimestamp(data.selectedConversation.conversation.updated_at)}
+						</div>
+						<div class="detail-item">
+							<strong>Total Messages:</strong> {data.selectedConversation.conversation.message_count}
+						</div>
+					</div>
+
+					<div class="messages-container">
+						{#each data.selectedConversation.messages as message}
+							<div class="message {message.role}">
+								<div class="message-header">
+									<span class="role">{message.role === 'user' ? '👤 User' : '🤖 Zuo'}</span>
+									<span class="timestamp">{formatTimestamp(message.timestamp)}</span>
+								</div>
+								<div class="message-content">
+									{message.content}
+								</div>
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<div class="no-selection">
+						<h2>Select a conversation</h2>
+						<p>Choose a conversation from the left panel to view its messages.</p>
 					</div>
 				{/if}
 			</div>
 		</div>
-
-		<div class="messages-panel">
-			{#if data.selectedConversation.conversation}
-				<div class="panel-header">
-					<h2>
-						Conversation with {formatIP(data.selectedConversation.conversation.client_ip)}
-					</h2>
-					<button class="close-btn" onclick={clearSelection}>✕</button>
-				</div>
-				
-				<div class="conversation-details">
-					<div class="detail-item">
-						<strong>Started:</strong> {formatTimestamp(data.selectedConversation.conversation.created_at)}
-					</div>
-					<div class="detail-item">
-						<strong>Last Updated:</strong> {formatTimestamp(data.selectedConversation.conversation.updated_at)}
-					</div>
-					<div class="detail-item">
-						<strong>Total Messages:</strong> {data.selectedConversation.conversation.message_count}
-					</div>
-				</div>
-
-				<div class="messages-container">
-					{#each data.selectedConversation.messages as message}
-						<div class="message {message.role}">
-							<div class="message-header">
-								<span class="role">{message.role === 'user' ? '👤 User' : '🤖 Zuo'}</span>
-								<span class="timestamp">{formatTimestamp(message.timestamp)}</span>
-							</div>
-							<div class="message-content">
-								{message.content}
-							</div>
-						</div>
-					{/each}
-				</div>
-			{:else}
-				<div class="no-selection">
-					<h2>Select a conversation</h2>
-					<p>Choose a conversation from the left panel to view its messages.</p>
-				</div>
-			{/if}
-		</div>
 	</div>
-</div>
+{/if}
 
 <style>
+	.auth-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: calc(100vh - 8rem);
+		background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+		padding: 2rem;
+	}
+
+	.auth-box {
+		background: white;
+		padding: 3rem;
+		border-radius: 20px;
+		box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+		text-align: center;
+		max-width: 400px;
+		width: 100%;
+	}
+
+	.auth-box h1 {
+		margin: 0 0 0.5rem 0;
+		color: #374151;
+		font-size: 1.5rem;
+	}
+
+	.auth-box p {
+		color: #6b7280;
+		margin-bottom: 1.5rem;
+	}
+
+	.password-input {
+		width: 100%;
+		padding: 0.75rem 1rem;
+		border: 2px solid #e5e7eb;
+		border-radius: 12px;
+		font-size: 1rem;
+		margin-bottom: 1rem;
+		transition: border-color 0.2s;
+	}
+
+	.password-input:focus {
+		outline: none;
+		border-color: #6366f1;
+	}
+
+	.auth-button {
+		width: 100%;
+		padding: 0.75rem 1.5rem;
+		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		color: white;
+		border: none;
+		border-radius: 12px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: transform 0.2s;
+	}
+
+	.auth-button:hover {
+		transform: translateY(-1px);
+	}
+
+	.hint {
+		font-size: 0.85rem;
+		margin-top: 1rem !important;
+		color: #9ca3af !important;
+	}
+
 	.admin-container {
 		max-width: 1400px;
 		margin: 0 auto;
@@ -135,11 +243,34 @@
 		padding: 2rem;
 		border-radius: 16px;
 		margin-bottom: 2rem;
-		text-align: center;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 2rem;
+	}
+
+	.logout-btn {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 8px;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		font-size: 0.9rem;
+		transition: background 0.2s;
+	}
+
+	.logout-btn:hover {
+		background: rgba(255, 255, 255, 0.3);
 	}
 
 	.admin-header h1 {
-		margin: 0 0 0.5rem 0;
+		margin: 0;
 		font-size: 2rem;
 		font-weight: 600;
 	}
@@ -351,6 +482,12 @@
 		.messages-panel {
 			height: 600px;
 		}
+
+		.admin-header {
+			flex-direction: column;
+			gap: 1rem;
+			text-align: center;
+		}
 	}
 
 	@media (max-width: 768px) {
@@ -369,6 +506,10 @@
 		.conversation-details {
 			flex-direction: column;
 			gap: 0.5rem;
+		}
+
+		.auth-box {
+			padding: 2rem;
 		}
 	}
 </style> 
