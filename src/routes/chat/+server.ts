@@ -1,6 +1,7 @@
 import { GROQ_API_KEY } from '$env/static/private';
 import Groq from 'groq-sdk';
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { getOrCreateConversation, saveMessage, getRecentMessages, initializeDatabase } from '$lib/database.js';
 
 let groq: Groq | null = null;
 
@@ -10,25 +11,6 @@ if (GROQ_API_KEY) {
 		apiKey: GROQ_API_KEY
 	});
 }
-
-// In-memory conversation storage (keyed by IP)
-const conversations = new Map<string, Array<{role: 'user' | 'assistant', content: string, timestamp: number}>>();
-
-// Clean up old conversations (older than 1 hour)
-function cleanupOldConversations() {
-	const oneHourAgo = Date.now() - (60 * 60 * 1000);
-	for (const [ip, messages] of conversations.entries()) {
-		const recentMessages = messages.filter(msg => msg.timestamp > oneHourAgo);
-		if (recentMessages.length === 0) {
-			conversations.delete(ip);
-		} else {
-			conversations.set(ip, recentMessages);
-		}
-	}
-}
-
-// Clean up every 10 minutes
-setInterval(cleanupOldConversations, 10 * 60 * 1000);
 
 function getClientIP(request: Request, headers?: Headers): string {
 	// Try multiple headers for IP detection
@@ -85,6 +67,9 @@ Keep responses conversational, technically informed but accessible, and moderate
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
+		// Initialize database on first request (this is idempotent)
+		await initializeDatabase();
+
 		const { message } = await request.json();
 
 		if (!message || typeof message !== 'string') {
@@ -99,14 +84,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Get client IP for conversation tracking
 		const clientIP = getClientIP(request);
 		
-		// Get or create conversation history for this IP
-		if (!conversations.has(clientIP)) {
-			conversations.set(clientIP, []);
-		}
-		const conversationHistory = conversations.get(clientIP)!;
+		// Get or create conversation in database
+		const conversationId = await getOrCreateConversation(clientIP);
 		
-		// Limit conversation history to last 10 messages (5 exchanges) to stay within token limits
-		const recentHistory = conversationHistory.slice(-10);
+		// Get recent conversation history from database (limit to 10 messages for token limits)
+		const recentHistory = await getRecentMessages(conversationId, 10);
 		
 		// Build messages array with system prompt + conversation history + new message
 		const messages = [
@@ -133,15 +115,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const response = completion.choices[0]?.message?.content || "I'm having trouble responding right now. Feel free to ask me about my projects or development experience!";
 
-		// Store the conversation
-		const timestamp = Date.now();
-		conversationHistory.push(
-			{ role: 'user', content: message, timestamp },
-			{ role: 'assistant', content: response, timestamp }
-		);
-		
-		// Update the conversation history
-		conversations.set(clientIP, conversationHistory);
+		// Save both user message and assistant response to database
+		await saveMessage(conversationId, 'user', message);
+		await saveMessage(conversationId, 'assistant', response);
 
 		return json({ response });
 	} catch (error) {
