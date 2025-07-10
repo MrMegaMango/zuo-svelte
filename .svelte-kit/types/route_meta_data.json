@@ -4,6 +4,10 @@
 		"src/routes/+layout.js",
 		"src/routes/+layout.js"
 	],
+	"/admin": [
+		"src/routes/admin/+page.server.ts",
+		"src/routes/+layout.js"
+	],
 	"/chat": [
 		"src/routes/chat/+page.ts",
 		"src/routes/+layout.js",
