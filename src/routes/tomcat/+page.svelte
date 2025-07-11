@@ -208,7 +208,7 @@
 			.replace(/'m/gi, ' am')
 			
 			// Character-specific pronunciations
-			.replace(/meow/gi, 'mee oww')
+			.replace(/meow/gi, 'mee ow')
 			.replace(/purr/gi, 'purrrr')
 			
 			// Technical terms and acronyms
