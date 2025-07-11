@@ -543,9 +543,6 @@
 	<div class="voice-container">
 		{#if isVoiceSupported}
 			<div class="voice-info">
-				<div class="quirky-indicator">
-					🎭 Human-Like Tomcat Voice 🐱
-				</div>
 				{#if isIOS && needsUserGesture}
 					<button class="voice-test-button" onclick={speakWelcomeMessage}>
 						🔊 Enable Audio & Hear Welcome
@@ -863,22 +860,7 @@
 		gap: 1rem;
 	}
 
-	.quirky-indicator {
-		background: rgba(255, 255, 255, 0.9);
-		padding: 0.75rem 1.5rem;
-		border-radius: 20px;
-		border: 2px solid #d97706;
-		color: #92400e;
-		font-weight: 600;
-		font-size: 0.9rem;
-		animation: quirkBounce 3s ease-in-out infinite;
-	}
 
-	@keyframes quirkBounce {
-		0%, 100% { transform: scale(1) rotate(0deg); }
-		25% { transform: scale(1.05) rotate(1deg); }
-		75% { transform: scale(0.98) rotate(-1deg); }
-	}
 
 	.voice-test-button {
 		background: rgba(255, 255, 255, 0.1);
@@ -1071,11 +1053,6 @@
 
 		.voice-info {
 			gap: 0.75rem;
-		}
-
-		.quirky-indicator {
-			font-size: 0.8rem;
-			padding: 0.5rem 1rem;
 		}
 
 		.voice-test-button {
