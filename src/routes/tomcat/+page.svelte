@@ -197,6 +197,8 @@
 	function createNaturalSpeechSegments(text: string) {
 		// Comprehensive text normalization for natural speech
 		let processedText = text
+			// Remove movement/action indicators (text between asterisks)
+			.replace(/\*[^*]*\*/g, '')
 			// Normalize contractions to full forms for clearer pronunciation
 			.replace(/won't/gi, 'will not')
 			.replace(/can't/gi, 'cannot')
