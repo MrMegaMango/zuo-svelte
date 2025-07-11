@@ -53,7 +53,8 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({ 
-					message: `${userMessage} (Note: You are Tomcat Zuo, a playful cat version of Zuo. Be slightly more playful and occasionally add cat references, but still be helpful and knowledgeable!)` 
+					message: userMessage,
+					chatType: 'tomcat'
 				})
 			});
 

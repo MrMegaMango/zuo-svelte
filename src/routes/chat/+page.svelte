@@ -53,7 +53,10 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ message: userMessage })
+				body: JSON.stringify({ 
+					message: userMessage,
+					chatType: 'zuo'
+				})
 			});
 
 			if (!response.ok) {

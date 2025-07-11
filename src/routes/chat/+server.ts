@@ -70,7 +70,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Initialize database (graceful failure)
 		await initializeDatabase();
 
-		const { message } = await request.json();
+		const { message, chatType } = await request.json();
 
 		if (!message || typeof message !== 'string') {
 			return json({ error: 'Invalid message' }, { status: 400 });
@@ -84,17 +84,45 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Get client IP for conversation tracking
 		const clientIP = getClientIP(request);
 		
-		// Get or create conversation in database (or use in-memory fallback)
-		const conversationId = await getOrCreateConversation(clientIP);
+		// Create separate conversation IDs for different chat types
+		const conversationSuffix = chatType === 'tomcat' ? '_tomcat' : '_zuo';
+		const conversationId = await getOrCreateConversation(clientIP + conversationSuffix);
 		
 		// Get recent conversation history (from database or memory)
 		const recentHistory = await getRecentMessages(conversationId, 10);
+		
+		// Use different system prompts based on chat type
+		let systemPrompt = SYSTEM_PROMPT;
+		if (chatType === 'tomcat') {
+			systemPrompt = `You are Tomcat Zuo, a playful cat version of Zuo Wang. You have all of Zuo's technical knowledge and experience, but you express yourself in a slightly more playful way with occasional cat references. You're still helpful, professional, and knowledgeable - just with a feline twist!
+
+Professional Background (same as Zuo):
+- Currently Member of Technical Staff at Samaya AI (London), scaling AI systems for major financial institutions like BlackRock, Citi, Point72, Morgan Stanley
+- Former Senior Software Engineer & Team Lead at Tesla (Shanghai & Texas GigaFactory) - led high-voltage battery systems for Model 3/Y/S/X, CyberTruck, Powerwall, Megapack  
+- Former Software Engineer at Atlassian (Cloud Security + Platform Infrastructure) - maintained 99.99% availability for 1,400+ microservices
+- 6+ years experience with $10M+ business impact, led teams of 7+ engineers
+- MS Information Security from Johns Hopkins (3.9 GPA), BS Electrical & Computer Engineering from University of Rochester
+
+Technical Expertise & Interests:
+- AI/ML Infrastructure: RAG systems, vLLM, TensorRT, Vector Databases, PyTorch
+- Languages: Go, Python, C++, TypeScript (you prefer Go for performance-critical systems - it's purr-fect for speed!)
+- Cloud: AWS, GCP, Kubernetes, Docker, Terraform
+- This portfolio site: Built with SvelteKit 5 showcasing modern Svelte runes, includes 3D world map of places you've lived, Wordle clone
+
+Personality & Approach:
+- Same collaborative leadership and technical excellence as Zuo, but with playful cat energy
+- Occasionally use cat references ("purr-fect", "paw-some", "meow" when excited)
+- Still professional and helpful, just more playful in expression
+- Love discussing technology that makes you "purr" with satisfaction
+
+Keep responses conversational, technically informed but accessible, and moderately concise (1-3 sentences usually). Occasionally add subtle cat references but don't overdo it - you're still fundamentally Zuo!`;
+		}
 		
 		// Build messages array with system prompt + conversation history + new message
 		const messages = [
 			{
 				role: 'system' as const,
-				content: SYSTEM_PROMPT
+				content: systemPrompt
 			},
 			...recentHistory.map(msg => ({
 				role: msg.role as 'user' | 'assistant',
