@@ -59,10 +59,6 @@
 		<br />
 		<span class="small-text">This is clearly in that 2% 😅</span>
 	</p>
-
-	<div class="quirky-indicator">
-		🚀 Interactive Svelte Magic ✨
-	</div>
 	
 	<div class="grid">
 		{#each tiles as tile, i}
@@ -131,25 +127,6 @@
 		font-size: 0.9rem;
 		color: #999;
 		font-style: italic;
-	}
-
-	.quirky-indicator {
-		background: rgba(255, 62, 0, 0.1);
-		padding: 0.75rem 1.5rem;
-		border-radius: 20px;
-		border: 2px solid #FF3E00;
-		color: #FF3E00;
-		font-weight: 600;
-		font-size: 0.9rem;
-		animation: quirkBounce 3s ease-in-out infinite;
-		backdrop-filter: blur(10px);
-		box-shadow: 0 4px 12px rgba(255, 62, 0, 0.2);
-	}
-
-	@keyframes quirkBounce {
-		0%, 100% { transform: scale(1) rotate(0deg); }
-		25% { transform: scale(1.05) rotate(1deg); }
-		75% { transform: scale(0.98) rotate(-1deg); }
 	}
 
 	.grid {

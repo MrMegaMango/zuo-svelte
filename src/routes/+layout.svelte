@@ -78,10 +78,19 @@
 		font-size: 0.875rem;
 		transition: background-color 0.2s;
 		z-index: 1000;
+		animation: quirkBounce 3s ease-in-out infinite;
+		backdrop-filter: blur(10px);
+		box-shadow: 0 4px 12px rgba(74, 85, 104, 0.3);
 	}
 
 	.back-button:hover {
 		background-color: #2d3748;
+	}
+
+	@keyframes quirkBounce {
+		0%, 100% { transform: scale(1) rotate(0deg); }
+		25% { transform: scale(1.05) rotate(1deg); }
+		75% { transform: scale(0.98) rotate(-1deg); }
 	}
 
 	@media (min-width: 480px) {
