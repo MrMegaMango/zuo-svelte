@@ -446,7 +446,7 @@
 
 	.message-avatar {
 		width: 3.5rem;
-		height: 3.5rem;
+		height: 4.5rem;
 		border-radius: 12px;
 		overflow: hidden;
 		display: flex;
@@ -470,7 +470,8 @@
 	.profile-pic {
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
+		object-fit: cover;
+		object-position: center;
 	}
 
 	.user-avatar {
@@ -521,8 +522,8 @@
 		}
 
 		.message-avatar {
-			width: 2.75rem;
-			height: 2.75rem;
+			width: 2.5rem;
+			height: 3.25rem;
 			border-radius: 10px;
 		}
 
