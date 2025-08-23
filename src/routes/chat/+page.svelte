@@ -447,7 +447,7 @@
 	.message-avatar {
 		width: 3.5rem;
 		height: 3.5rem;
-		border-radius: 50%;
+		border-radius: 12px;
 		overflow: hidden;
 		display: flex;
 		align-items: center;
@@ -456,21 +456,21 @@
 	}
 
 	.message.zuo .message-avatar {
-		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-		border: 2px solid rgba(255, 255, 255, 0.3);
-		box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+		background: #f8fafc;
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 	}
 
 	.message.user .message-avatar {
-		background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-		border: 2px solid rgba(99, 102, 241, 0.2);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		background: #f8fafc;
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 	}
 
 	.profile-pic {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
 	}
 
 	.user-avatar {
@@ -523,6 +523,7 @@
 		.message-avatar {
 			width: 2.75rem;
 			height: 2.75rem;
+			border-radius: 10px;
 		}
 
 		.message-content {
