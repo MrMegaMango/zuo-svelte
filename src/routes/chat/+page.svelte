@@ -123,7 +123,7 @@
 			<div class="message {message.sender}">
 				{#if message.sender === 'zuo'}
 					<div class="message-avatar">
-						<img src="/zuo-profile.svg" alt="Zuo" class="profile-pic" />
+						<img src="/zuo-profile-image.jpg" alt="Zuo" class="profile-pic" />
 					</div>
 				{/if}
 				<div class="message-content">
@@ -143,7 +143,7 @@
 		{#if isTyping}
 			<div class="message zuo">
 				<div class="message-avatar">
-					<img src="/zuo-profile.svg" alt="Zuo" class="profile-pic" />
+					<img src="/zuo-profile-image.jpg" alt="Zuo" class="profile-pic" />
 				</div>
 				<div class="message-content">
 					<div class="typing-indicator">
