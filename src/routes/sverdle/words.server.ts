@@ -1571,3 +1571,4 @@ export const words = [
 	'yield',
 	'youth'
 ];
+export const allowed = new Set(words);

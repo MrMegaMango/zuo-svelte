@@ -121,17 +121,30 @@
 	<div class="messages-container" bind:this={messagesContainer}>
 		{#each messages as message (message.id)}
 			<div class="message {message.sender}">
+				{#if message.sender === 'zuo'}
+					<div class="message-avatar">
+						<img src="/zuo-profile.svg" alt="Zuo" class="profile-pic" />
+					</div>
+				{/if}
 				<div class="message-content">
 					<div class="message-text">{message.text}</div>
 					<div class="message-time">
 						{message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 					</div>
 				</div>
+				{#if message.sender === 'user'}
+					<div class="message-avatar">
+						<div class="user-avatar">👤</div>
+					</div>
+				{/if}
 			</div>
 		{/each}
 		
 		{#if isTyping}
 			<div class="message zuo">
+				<div class="message-avatar">
+					<img src="/zuo-profile.svg" alt="Zuo" class="profile-pic" />
+				</div>
 				<div class="message-content">
 					<div class="typing-indicator">
 						<span></span>
@@ -279,6 +292,8 @@
 		display: flex;
 		max-width: 75%;
 		animation: messageSlide 0.3s ease-out;
+		align-items: flex-start;
+		gap: 0.75rem;
 	}
 
 	@keyframes messageSlide {
@@ -294,6 +309,7 @@
 
 	.message.user {
 		align-self: flex-end;
+		flex-direction: row-reverse;
 	}
 
 	.message.zuo {
@@ -428,6 +444,39 @@
 		box-shadow: none;
 	}
 
+	.message-avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.message.zuo .message-avatar {
+		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+	}
+
+	.message.user .message-avatar {
+		background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+		border: 2px solid rgba(99, 102, 241, 0.2);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.profile-pic {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.user-avatar {
+		font-size: 1.5rem;
+		color: #6366f1;
+	}
 
 
 	@media (max-width: 768px) {
@@ -468,6 +517,12 @@
 
 		.message {
 			max-width: 85%;
+			gap: 0.5rem;
+		}
+
+		.message-avatar {
+			width: 2rem;
+			height: 2rem;
 		}
 
 		.message-content {
@@ -487,7 +542,5 @@
 			padding: 0.625rem 1.25rem;
 			min-width: 70px;
 		}
-
-
 	}
 </style>
