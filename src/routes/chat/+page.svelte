@@ -445,8 +445,8 @@
 	}
 
 	.message-avatar {
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 3.5rem;
+		height: 3.5rem;
 		border-radius: 50%;
 		overflow: hidden;
 		display: flex;
@@ -521,8 +521,8 @@
 		}
 
 		.message-avatar {
-			width: 2rem;
-			height: 2rem;
+			width: 2.75rem;
+			height: 2.75rem;
 		}
 
 		.message-content {
