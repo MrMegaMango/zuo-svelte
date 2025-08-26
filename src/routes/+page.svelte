@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Spring } from 'svelte/motion';
 	import Counter from './Counter.svelte';
-	import { base } from '$app/paths';
 
 	const colors = ['#FF3E00', '#40B3FF', '#676778', '#FF6B6B', '#4ECB71'];
 	let tiles = Array(25).fill(null).map((_, i) => ({
@@ -87,14 +86,6 @@
 
 	<div class="counter-section">
 		<Counter />
-	</div>
-
-	<div class="navigation-section">
-		<div class="nav-links">
-			<a href="{base}/sverdle" class="nav-link">Play Wordle</a>
-			<a href="{base}/world-map" class="nav-link">View Map</a>
-			<a href="{base}/chat" class="nav-link">Chat</a>
-		</div>
 	</div>
 </section>
 
@@ -192,32 +183,6 @@
 		margin-bottom: 1rem;
 	}
 
-	.navigation-section {
-		margin-top: 2rem;
-		text-align: center;
-	}
-
-	.nav-links {
-		display: flex;
-		gap: 1rem;
-		justify-content: center;
-		flex-wrap: wrap;
-	}
-
-	.nav-link {
-		padding: 0.75rem 1.5rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
-		text-decoration: none;
-		border-radius: 8px;
-		font-weight: 600;
-		transition: all 0.2s;
-	}
-
-	.nav-link:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-	}
 
 	@media (max-width: 600px) {
 		.grid {
