@@ -189,7 +189,7 @@
 		display: flex;
 		align-items: center;
 		padding: 1.5rem 2rem;
-		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+		background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 40%, #f59e0b 80%);
 		color: white;
 		gap: 1rem;
 		position: relative;
@@ -325,7 +325,7 @@
 	}
 
 	.message.user .message-content {
-		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
 		color: white;
 		border-bottom-right-radius: 8px;
 		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -361,7 +361,7 @@
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, #6366f1, #8b5cf6);
+		background: linear-gradient(135deg, #f59e0b, #14b8a6);
 		animation: typing 1.4s infinite ease-in-out;
 	}
 
@@ -421,7 +421,7 @@
 
 	button {
 		padding: 0.75rem 1.5rem;
-		background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+		background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
 		color: white;
 		border: none;
 		border-radius: 16px;
