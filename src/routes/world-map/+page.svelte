@@ -933,16 +933,14 @@
 			style="--accent: {selectedLocation ? selectedLocation.color : '#5eead4'}"
 		>
 			{#if selectedLocation}
-				<p class="section-label">Pinned City</p>
+				<p class="section-label">Selected City</p>
 				<h2>{selectedLocation.name}</h2>
 				<p>{selectedLocation.description}</p>
 				<button type="button" class="secondary-button" on:click={clearSelection}>Clear selection</button>
 			{:else}
-				<p class="section-label">Map Notes</p>
-				<h2>Places that shaped my path</h2>
-				<p>
-					A small atlas of the cities connected to my work, study, and personal life.
-				</p>
+				<p class="section-label">Select A City</p>
+				<h2>Pick a stop on the map</h2>
+				<p>Its details will show up here.</p>
 			{/if}
 		</section>
 
@@ -1129,6 +1127,7 @@
 		grid-template-columns: minmax(0, 1fr) minmax(320px, 0.95fr);
 		gap: 1.1rem;
 		margin-top: 1.25rem;
+		align-items: start;
 	}
 
 	.location-info,
@@ -1140,6 +1139,10 @@
 		padding: 1.4rem;
 		box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 		backdrop-filter: blur(18px);
+	}
+
+	.location-info {
+		align-self: start;
 	}
 
 	.location-info::before {
