@@ -168,18 +168,21 @@
 
 	let selectedLocation: Location | null = null;
 	let hoveredLocation: Location | null = null;
+	let ambientLocation: Location | null = null;
 	let rotation = 35;
 	let targetRotation: number | null = null;
 	let isDragging = false;
 	let activePointerId: number | null = null;
 	let lastMouseX = 0;
 	let dragDistance = 0;
+	let lastAmbientSwitchAt = 0;
 	let zoomLevel = 1;
 	let canvasWidth = 0;
 	let canvasHeight = 0;
 
 	const minZoom = 0.88;
 	const maxZoom = 1.35;
+	const ambientSwitchInterval = 2600;
 
 	function splitPaths(points: Array<GeoPoint | null>): GeoPoint[][] {
 		const paths: GeoPoint[][] = [];
@@ -343,6 +346,38 @@
 				size: 3.7 + depth * 3.6
 			};
 		});
+	}
+
+	function syncAmbientLocation(projectedLocations: ProjectedLocation[]) {
+		if (hoveredLocation || selectedLocation) return;
+
+		if (projectedLocations.length === 0) {
+			ambientLocation = null;
+			return;
+		}
+
+		const now = Date.now();
+		const byProminence = [...projectedLocations].sort((left, right) => right.depth - left.depth);
+		const currentProjection = ambientLocation
+			? byProminence.find((location) => location.location === ambientLocation)
+			: null;
+		const topProjection = byProminence[0];
+
+		if (!currentProjection) {
+			ambientLocation = topProjection.location;
+			lastAmbientSwitchAt = now;
+			return;
+		}
+
+		if (currentProjection.location === topProjection.location) return;
+
+		const hasWaitedLongEnough = now - lastAmbientSwitchAt > ambientSwitchInterval;
+		const topIsMeaningfullyCloser = topProjection.depth - currentProjection.depth > 0.08;
+
+		if (hasWaitedLongEnough && topIsMeaningfullyCloser) {
+			ambientLocation = topProjection.location;
+			lastAmbientSwitchAt = now;
+		}
 	}
 
 	function drawProjectedLine(points: GeoPoint[], radius: number, centerX: number, centerY: number) {
@@ -607,7 +642,16 @@
 			.filter((location) => location.visible)
 			.sort((left, right) => left.depth - right.depth);
 
+		syncAmbientLocation(projectedLocations);
+
 		for (const projectedLocation of projectedLocations) {
+			const isSelected = selectedLocation === projectedLocation.location;
+			const isHovered = hoveredLocation === projectedLocation.location;
+			const isAmbient =
+				!selectedLocation &&
+				!hoveredLocation &&
+				ambientLocation === projectedLocation.location;
+
 			ctx.beginPath();
 			ctx.arc(projectedLocation.x, projectedLocation.y, projectedLocation.size * 1.9, 0, Math.PI * 2);
 			ctx.fillStyle = hexWithAlpha(projectedLocation.location.color, 0.16);
@@ -624,7 +668,7 @@
 			ctx.strokeStyle = 'rgba(248, 250, 252, 0.92)';
 			ctx.stroke();
 
-			if (selectedLocation === projectedLocation.location || hoveredLocation === projectedLocation.location) {
+			if (isSelected || isHovered || isAmbient) {
 				ctx.beginPath();
 				ctx.arc(
 					projectedLocation.x,
@@ -635,14 +679,14 @@
 				);
 				ctx.strokeStyle = hexWithAlpha(
 					projectedLocation.location.color,
-					selectedLocation === projectedLocation.location ? 0.92 : 0.7
+					isSelected ? 0.92 : isHovered ? 0.7 : 0.52
 				);
-				ctx.lineWidth = selectedLocation === projectedLocation.location ? 2.2 : 1.6;
+				ctx.lineWidth = isSelected ? 2.2 : isHovered ? 1.6 : 1.25;
 				ctx.stroke();
 			}
 		}
 
-		const activeLocation = hoveredLocation ?? selectedLocation;
+		const activeLocation = hoveredLocation ?? selectedLocation ?? ambientLocation;
 		if (activeLocation) {
 			const projectedLocation = projectedLocations.find(
 				(location) => location.location === activeLocation
@@ -853,15 +897,6 @@
 	<header class="hero">
 		<p class="eyebrow">Journey Atlas</p>
 		<h1>Places I've Called Home</h1>
-		<p class="hero-copy">
-			A cleaner view of the cities that shaped my work, study, and life across North America,
-			Europe, and Asia.
-		</p>
-		<div class="hero-meta" aria-label="map summary">
-			<span>{locations.length} cities</span>
-			<span>Drag to rotate</span>
-			<span>Hover or tap to preview</span>
-		</div>
 	</header>
 
 	<section class="globe-shell">
@@ -887,8 +922,8 @@
 		</div>
 
 		<div class="stage-footer">
-			<span>{selectedLocation ? `Pinned on ${selectedLocation.name}` : 'Auto-rotates until you interact'}</span>
-			<span>Scroll or use the controls to zoom</span>
+			<span>{(hoveredLocation ?? selectedLocation ?? ambientLocation)?.name ?? 'A moving record of where I have lived and built'}</span>
+			<span>{(hoveredLocation ?? selectedLocation ?? ambientLocation)?.description ?? 'Across North America, Europe, and Asia'}</span>
 		</div>
 	</section>
 
@@ -901,15 +936,12 @@
 				<p class="section-label">Pinned City</p>
 				<h2>{selectedLocation.name}</h2>
 				<p>{selectedLocation.description}</p>
-				<button type="button" class="secondary-button" on:click={clearSelection}>
-					Resume auto-rotation
-				</button>
+				<button type="button" class="secondary-button" on:click={clearSelection}>Clear selection</button>
 			{:else}
 				<p class="section-label">Map Notes</p>
-				<h2>Select a city to lock it in place</h2>
+				<h2>Places that shaped my path</h2>
 				<p>
-					The labels stay off the globe until you need them. Hover a marker for a quick callout
-					or click one to pin it and read the details here.
+					A small atlas of the cities connected to my work, study, and personal life.
 				</p>
 			{/if}
 		</section>
@@ -939,9 +971,7 @@
 		</aside>
 	</div>
 
-	<footer class="instructions-footnote">
-		Drag to rotate • Scroll or use +/- to zoom • Click a marker or legend item to pin it
-	</footer>
+	<footer class="instructions-footnote">Explore the map and follow the route from city to city.</footer>
 </div>
 
 <style>
@@ -980,32 +1010,6 @@
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
-	}
-
-	.hero-copy {
-		max-width: 42rem;
-		margin: 1rem auto 0;
-		font-size: 1.05rem;
-		line-height: 1.7;
-		color: var(--muted);
-	}
-
-	.hero-meta {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.75rem;
-		margin-top: 1.25rem;
-	}
-
-	.hero-meta span {
-		padding: 0.55rem 0.9rem;
-		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.62);
-		border: 1px solid rgba(15, 23, 42, 0.07);
-		box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
-		color: #0f172a;
-		font-size: 0.92rem;
 	}
 
 	.globe-shell {
@@ -1271,10 +1275,6 @@
 
 		.hero {
 			margin-bottom: 1.1rem;
-		}
-
-		.hero-copy {
-			font-size: 0.98rem;
 		}
 
 		.globe-shell {
