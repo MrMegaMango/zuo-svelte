@@ -11,9 +11,6 @@
 			<li aria-current={page.url.pathname === '/' ? 'page' : undefined}>
 				<a href="{base}/">Home</a>
 			</li>
-			<li aria-current={page.url.pathname.startsWith('/playground') ? 'page' : undefined}>
-				<a href="{base}/playground">Playground</a>
-			</li>
 			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="{base}/sverdle">Wordle</a>
 			</li>
@@ -22,6 +19,9 @@
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/chat') ? 'page' : undefined}>
 				<a href="{base}/chat">Chat</a>
+			</li>
+			<li aria-current={page.url.pathname.startsWith('/playground') ? 'page' : undefined}>
+				<a href="{base}/playground">Playground</a>
 			</li>
 			<li>
 				<a href="https://car-price-reports.vercel.app/" target="_blank" rel="noopener noreferrer">CarDeals</a>
