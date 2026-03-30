@@ -8,7 +8,7 @@
 	<p class="subtitle">Full-stack development, custom AI integrations, and workflow automation.</p>
 	<div class="links">
 		<a href="mailto:amangoworks@gmail.com">amangoworks@gmail.com</a>
-		<a href="https://linkedin.com/in/mango-zuo" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+		<a href="https://www.linkedin.com/in/mrmightymango/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
 		<a href="https://calendar.app.google/1STzyF9tVjC4xBVX6" target="_blank" rel="noopener noreferrer">Schedule a call</a>
 	</div>
 </section>
