@@ -34,7 +34,7 @@
 
 	<footer>
 		<p>
-			built with DeepSeek instead of reading Svelte docs
+			built with Svelte 5 & curiosity
 		</p>
 	</footer>
 </div>

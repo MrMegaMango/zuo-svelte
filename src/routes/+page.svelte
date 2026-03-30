@@ -65,10 +65,10 @@
 				type="button"
 				class="tile"
 				style="background-color: {tile.color}; transform: scale({tile.scale})"
-				on:click={() => handleTileClick(i)}
-				on:mouseenter={() => handleTileHover(i)}
-				on:mouseleave={() => handleTileLeave(i)}
-				on:keydown={(e) => {
+				onclick={() => handleTileClick(i)}
+				onmouseenter={() => handleTileHover(i)}
+				onmouseleave={() => handleTileLeave(i)}
+				onkeydown={(e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
 						handleTileClick(i);
 					}
