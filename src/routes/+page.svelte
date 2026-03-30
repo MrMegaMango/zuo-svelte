@@ -6,10 +6,10 @@
 <section>
 	<h1>I build websites and AI tools <br /> for businesses.</h1>
 	<p class="subtitle">Full-stack development, custom AI integrations, and workflow automation.</p>
-	<div class="cta-group">
-		<a href="mailto:amangoworks@gmail.com" class="cta">amangoworks@gmail.com</a>
-		<a href="https://linkedin.com/in/mango-zuo" class="cta secondary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-		<a href="https://calendly.com/" class="cta secondary" target="_blank" rel="noopener noreferrer">Schedule a call</a>
+	<div class="links">
+		<a href="mailto:amangoworks@gmail.com">amangoworks@gmail.com</a>
+		<a href="https://linkedin.com/in/mango-zuo" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+		<a href="https://calendar.app.google/1STzyF9tVjC4xBVX6" target="_blank" rel="noopener noreferrer">Schedule a call</a>
 	</div>
 </section>
 
@@ -38,35 +38,21 @@
 		max-width: 480px;
 	}
 
-	.cta-group {
+	.links {
 		display: flex;
-		gap: 1rem;
+		gap: 2rem;
 		flex-wrap: wrap;
 		justify-content: center;
 	}
 
-	.cta {
-		display: inline-block;
-		padding: 0.75rem 1.5rem;
-		background: #FF3E00;
-		color: white;
+	.links a {
+		color: #FF3E00;
 		text-decoration: none;
-		border-radius: 6px;
-		font-weight: 600;
 		font-size: 1rem;
-		transition: background 0.2s;
 	}
 
-	.cta:hover {
-		background: #e03500;
-	}
-
-	.cta.secondary {
-		background: #4a5568;
-	}
-
-	.cta.secondary:hover {
-		background: #2d3748;
+	.links a:hover {
+		text-decoration: underline;
 	}
 
 	@media (max-width: 600px) {
