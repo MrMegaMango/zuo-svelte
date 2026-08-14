@@ -46,7 +46,7 @@ pnpm sync               # Sync SvelteKit generated files
 ## Configuration
 
 ### Runtime & Deployment
-- **Vercel deployment** with Node.js 20.x runtime specified in `svelte.config.js`
+- **Vercel deployment** with Node.js 24.x runtime specified in `svelte.config.js`
 - `vercel.json` should only contain `{"framework": "sveltekit"}` 
 - Runtime configuration belongs in `svelte.config.js`, not `vercel.json`
 
