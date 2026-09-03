@@ -11,6 +11,9 @@
 			<li aria-current={page.url.pathname === '/' ? 'page' : undefined}>
 				<a href="{base}/">Home</a>
 			</li>
+			<li>
+				<a href="{base}/#products">Products</a>
+			</li>
 			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="{base}/sverdle">Wordle</a>
 			</li>
@@ -22,12 +25,6 @@
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/playground') ? 'page' : undefined}>
 				<a href="{base}/playground">Playground</a>
-			</li>
-			<li>
-				<a href="https://car-price-reports.vercel.app/" target="_blank" rel="noopener noreferrer">CarDeals</a>
-			</li>
-			<li>
-				<a href="https://yumoo.vercel.app" target="_blank" rel="noopener noreferrer">Yumoo</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
@@ -104,5 +101,39 @@
 
 	a:hover {
 		color: var(--color-theme-1);
+	}
+
+	@media (max-width: 600px) {
+		header,
+		nav {
+			width: 100%;
+		}
+
+		nav {
+			background: var(--background);
+		}
+
+		nav svg {
+			display: none;
+		}
+
+		ul {
+			width: 100%;
+			height: 2.75rem;
+		}
+
+		nav a {
+			padding: 0 0.42rem;
+			font-size: 0.64rem;
+			letter-spacing: 0.06em;
+		}
+	}
+
+	@media (max-width: 340px) {
+		nav a {
+			padding: 0 0.26rem;
+			font-size: 0.58rem;
+			letter-spacing: 0.035em;
+		}
 	}
 </style>

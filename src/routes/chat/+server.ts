@@ -124,7 +124,7 @@ Keep responses conversational, technically informed but accessible, and moderate
 				role: 'system' as const,
 				content: systemPrompt
 			},
-			...recentHistory.map(msg => ({
+			...recentHistory.map((msg: { role: 'user' | 'assistant'; content: string }) => ({
 				role: msg.role as 'user' | 'assistant',
 				content: msg.content
 			})),

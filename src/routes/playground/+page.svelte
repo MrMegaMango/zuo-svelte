@@ -177,13 +177,6 @@
 		text-align: center;
 	}
 
-	h2 {
-		color: #676778;
-		font-size: 1.5rem;
-		margin-bottom: 1rem;
-	}
-
-
 	@media (max-width: 600px) {
 		.grid {
 			grid-template-columns: repeat(4, 1fr);

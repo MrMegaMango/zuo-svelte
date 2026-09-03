@@ -66,7 +66,7 @@
 	}
 
 	.back-button {
-		position: fixed;
+		position: absolute;
 		top: 4rem;
 		left: 1rem;
 		padding: 0.5rem 1rem;
