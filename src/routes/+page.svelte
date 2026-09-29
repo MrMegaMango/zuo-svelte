@@ -1,6 +1,28 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'DealDue',
+			label: 'Price tracking · Private',
+			description:
+				'A private price tracker with verified price history, stock checks, adjustable targets, and email alerts for qualifying deals.',
+			stack: ['React', 'Vite', 'Vercel'],
+			liveUrl: 'https://dealdue.vercel.app',
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
+			name: 'Haven',
+			label: 'Home search · Research',
+			description:
+				'A home-search dashboard that compares listings, climate, and monthly costs while keeping unverified requirements visible.',
+			stack: ['React', 'TypeScript', 'Leaflet'],
+			liveUrl: 'https://findhaven.vercel.app',
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'High Match',
 			label: 'Job search · Local-first',
 			description:
@@ -124,15 +146,17 @@
 						>
 							Open product <span aria-hidden="true">↗</span>
 						</a>
-						<a
-							href={product.githubUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label={`${product.name} on GitHub`}
-						>
-							GitHub <span aria-hidden="true">↗</span>
-						</a>
-					{:else}
+						{#if product.githubUrl}
+							<a
+								href={product.githubUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label={`${product.name} on GitHub`}
+							>
+								GitHub <span aria-hidden="true">↗</span>
+							</a>
+						{/if}
+					{:else if product.githubUrl}
 						<a
 							class="primary-link"
 							href={product.githubUrl}
