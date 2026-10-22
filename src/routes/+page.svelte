@@ -1,6 +1,17 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'Local Flow',
+			label: 'Dictation · On-device',
+			description:
+				'A private macOS dictation app with offline speech recognition, text cleanup, and voice editing.',
+			stack: ['SwiftUI', 'Python', 'MLX'],
+			liveUrl: null,
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'Courtside',
 			label: 'NBA viewer · Private',
 			description:
