@@ -1,6 +1,17 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'Courtside',
+			label: 'NBA viewer · Private',
+			description:
+				'A personal NBA viewer with Pacific-time schedules, fullscreen playback, live player stats, and 虎扑 fan ratings.',
+			stack: ['JavaScript', 'Node.js', 'HLS'],
+			liveUrl: 'https://courtside-zuo.vercel.app',
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'DealDue',
 			label: 'Price tracking · Private',
 			description:
