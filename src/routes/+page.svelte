@@ -1,6 +1,17 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'Zuo TV Home',
+			label: 'TV hub · Sign-in required',
+			description:
+				'A TV-friendly home for Courtside NBA games, with IYF search and links to movies, series, and shows.',
+			stack: ['JavaScript', 'Node.js', 'HLS'],
+			liveUrl: 'https://zuo-tv-home.vercel.app/',
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'Local Flow',
 			label: 'Dictation · On-device',
 			description:
