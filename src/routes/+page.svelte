@@ -1,6 +1,17 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'Keyfall',
+			label: 'Piano practice · iPad friendly',
+			description:
+				'Practice piano with falling notes, MIDI import, adjustable speed, and section loops.',
+			stack: ['JavaScript', 'Vite', 'Web Audio'],
+			liveUrl: 'https://keyfall-zuo.vercel.app',
+			githubUrl: null,
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'Zuo TV Home',
 			label: 'TV hub · Sign-in required',
 			description:
