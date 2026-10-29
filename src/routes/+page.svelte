@@ -6,7 +6,7 @@
 			description:
 				'A Windows companion for ARAM Mayhem, Arena, and TFT, with champion choices, builds, and reference data beside your game.',
 			stack: ['Python', 'Tkinter', 'Windows OCR'],
-			liveUrl: 'https://mrmegamango.github.io/mayhem-companion/',
+			liveUrl: 'https://arammayhem.pages.dev/',
 			githubUrl: 'https://github.com/MrMegaMango/mayhem-companion',
 			status: 'New',
 			isNew: true
