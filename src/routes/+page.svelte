@@ -1,6 +1,17 @@
 <script lang="ts">
 	const products = [
 		{
+			name: 'Mayhem Companion',
+			label: 'ARAM Mayhem · Windows companion',
+			description:
+				'A Windows companion for ARAM Mayhem, Arena, and TFT, with champion choices, builds, and reference data beside your game.',
+			stack: ['Python', 'Tkinter', 'Windows OCR'],
+			liveUrl: 'https://mrmegamango.github.io/mayhem-companion/',
+			githubUrl: 'https://github.com/MrMegaMango/mayhem-companion',
+			status: 'New',
+			isNew: true
+		},
+		{
 			name: 'Keyfall',
 			label: 'Piano practice · iPad friendly',
 			description:
